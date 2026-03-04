@@ -281,7 +281,7 @@ export default function LiveDemo() {
                         {/* Amount */}
                         <div>
                             <div className="flex justify-between items-center mb-3">
-                                <label className="text-[13px] font-semibold uppercase tracking-[0.08em] text-text-tertiary">
+                                <label htmlFor="transaction-amount" className="text-[13px] font-semibold uppercase tracking-[0.08em] text-text-tertiary">
                                     Transaction Amount
                                 </label>
                                 <span className="text-[14px] font-mono text-text-primary">
@@ -289,6 +289,7 @@ export default function LiveDemo() {
                                 </span>
                             </div>
                             <input
+                                id="transaction-amount"
                                 type="range"
                                 min={100}
                                 max={100000}
@@ -313,7 +314,7 @@ export default function LiveDemo() {
                         {/* Time */}
                         <div>
                             <div className="flex justify-between items-center mb-3">
-                                <label className="text-[13px] font-semibold uppercase tracking-[0.08em] text-text-tertiary">
+                                <label htmlFor="time-of-day" className="text-[13px] font-semibold uppercase tracking-[0.08em] text-text-tertiary">
                                     Time of Day
                                 </label>
                                 <span className="text-[14px] font-mono text-text-primary">
@@ -321,6 +322,7 @@ export default function LiveDemo() {
                                 </span>
                             </div>
                             <input
+                                id="time-of-day"
                                 type="range"
                                 min={0}
                                 max={23}
@@ -333,7 +335,7 @@ export default function LiveDemo() {
                         {/* Velocity */}
                         <div>
                             <div className="flex justify-between items-center mb-3">
-                                <label className="text-[13px] font-semibold uppercase tracking-[0.08em] text-text-tertiary">
+                                <label htmlFor="transaction-velocity" className="text-[13px] font-semibold uppercase tracking-[0.08em] text-text-tertiary">
                                     Transaction Velocity
                                 </label>
                                 <span className="text-[14px] font-mono text-text-primary">
@@ -341,6 +343,7 @@ export default function LiveDemo() {
                                 </span>
                             </div>
                             <input
+                                id="transaction-velocity"
                                 type="range"
                                 min={1}
                                 max={20}
@@ -367,7 +370,10 @@ export default function LiveDemo() {
                             <label className="text-[13px] font-semibold uppercase tracking-[0.08em] text-text-tertiary">
                                 VPN Detected
                             </label>
-                            <div
+                            <button
+                                type="button"
+                                aria-label="Toggle VPN detected"
+                                aria-pressed={inputs.vpn}
                                 className={`toggle-switch ${inputs.vpn ? "active" : ""}`}
                                 onClick={() => setInputs({ ...inputs, vpn: !inputs.vpn })}
                             />

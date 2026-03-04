@@ -2,6 +2,15 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
+const siteUrlEnv =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  process.env.DEPLOY_PRIME_URL ??
+  process.env.URL ??
+  "https://flintsecure.app";
+const siteUrl = siteUrlEnv.startsWith("http")
+  ? siteUrlEnv
+  : `https://${siteUrlEnv}`;
+
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -15,7 +24,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://flintsecure.app"),
+  metadataBase: new URL(siteUrl),
   title: {
     default: "Flint — Real-Time Fraud Detection API for Digital Payments",
     template: "%s | Flint",
@@ -48,7 +57,7 @@ export const metadata: Metadata = {
     description:
       "Every transaction scored in under 50ms. Device fingerprinting, behavioral analysis, and network intelligence. One API call before money moves.",
     type: "website",
-    url: "https://flintsecure.app",
+    url: siteUrl,
     siteName: "Flint",
     locale: "en_US",
     images: [
@@ -102,7 +111,7 @@ export default function RootLayout({
     author: {
       "@type": "Organization",
       name: "Flint",
-      url: "https://flintsecure.app",
+      url: siteUrl,
     },
   };
 
