@@ -1,16 +1,18 @@
+import dynamic from "next/dynamic";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/sections/Hero";
 import Problem from "@/components/sections/Problem";
-import HowItWorks from "@/components/sections/HowItWorks";
-import LiveDemo from "@/components/sections/LiveDemo";
-import Capabilities from "@/components/sections/Capabilities";
-import NetworkTimeline from "@/components/sections/NetworkTimeline";
-import Integration from "@/components/sections/Integration";
-import Performance from "@/components/sections/Performance";
-import OpenSource from "@/components/sections/OpenSource";
-import Pricing from "@/components/sections/Pricing";
-import Footer from "@/components/sections/Footer";
 import MouseEffect from "@/components/MouseEffect";
+
+const HowItWorks = dynamic(() => import("@/components/sections/HowItWorks"), { ssr: true });
+const LiveDemo = dynamic(() => import("@/components/sections/LiveDemo"), { ssr: true });
+const Capabilities = dynamic(() => import("@/components/sections/Capabilities"), { ssr: true });
+const NetworkTimeline = dynamic(() => import("@/components/sections/NetworkTimeline"), { ssr: true });
+const Integration = dynamic(() => import("@/components/sections/Integration"), { ssr: true });
+const Performance = dynamic(() => import("@/components/sections/Performance"), { ssr: true });
+const OpenSource = dynamic(() => import("@/components/sections/OpenSource"), { ssr: true });
+const Pricing = dynamic(() => import("@/components/sections/Pricing"), { ssr: true });
+const Footer = dynamic(() => import("@/components/sections/Footer"), { ssr: true });
 
 export default function Home() {
   return (
