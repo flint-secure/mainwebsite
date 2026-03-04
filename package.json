@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
   "name": "flint",
+=======
+  "name": "mainwebsite",
+>>>>>>> 880bd7b37b5b01d0b162cd4b42a6a78a6e27300c
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,8 +13,11 @@
     "lint": "eslint"
   },
   "dependencies": {
+<<<<<<< HEAD
     "framer-motion": "^12.34.5",
     "lucide-react": "^0.576.0",
+=======
+>>>>>>> 880bd7b37b5b01d0b162cd4b42a6a78a6e27300c
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3"
@@ -20,7 +27,10 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+<<<<<<< HEAD
     "babel-plugin-react-compiler": "1.0.0",
+=======
+>>>>>>> 880bd7b37b5b01d0b162cd4b42a6a78a6e27300c
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "tailwindcss": "^4",
