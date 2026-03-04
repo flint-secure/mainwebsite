@@ -144,9 +144,12 @@ export default function Hero() {
                             REAL-TIME FRAUD INTELLIGENCE
                         </motion.span>
 
-                        <div className="space-y-1">
+                        <h1 className="sr-only">
+                            Every transaction. Scored in 47ms. Before money moves.
+                        </h1>
+                        <div className="space-y-1" aria-hidden="true">
                             {headlineLines.map((line, i) => (
-                                <motion.h1
+                                <motion.div
                                     key={i}
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
@@ -162,7 +165,7 @@ export default function Hero() {
                                         <span className="text-amber-500">{line.suffix}</span>
                                     )}
                                     {line.text === "Before money moves." && ""}
-                                </motion.h1>
+                                </motion.div>
                             ))}
                         </div>
 

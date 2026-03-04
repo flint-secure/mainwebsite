@@ -23,7 +23,7 @@ const companyLinks = [
     { label: "Blog", href: "#" },
     { label: "LinkedIn", href: "#" },
     { label: "Twitter", href: "#" },
-    { label: "Contact", href: "mailto:hello@flintsecure.com" },
+    { label: "Contact", href: "mailto:hello.flintsecure@gmail.com" },
 ];
 
 function FooterColumn({
