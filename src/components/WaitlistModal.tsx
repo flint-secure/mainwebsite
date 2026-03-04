@@ -59,6 +59,7 @@ export default function WaitlistModal({ open, onClose }: WaitlistModalProps) {
                     >
                         <button
                             onClick={handleClose}
+                            aria-label="Close waitlist modal"
                             className="absolute top-4 right-4 text-text-tertiary hover:text-text-primary transition-colors cursor-pointer"
                         >
                             <X size={20} />
@@ -86,10 +87,11 @@ export default function WaitlistModal({ open, onClose }: WaitlistModalProps) {
                                 </p>
                                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                                     <div>
-                                        <label className="block text-xs font-semibold uppercase tracking-[0.08em] text-text-tertiary mb-2">
+                                        <label htmlFor="waitlist-name" className="block text-xs font-semibold uppercase tracking-[0.08em] text-text-tertiary mb-2">
                                             Name
                                         </label>
                                         <input
+                                            id="waitlist-name"
                                             type="text"
                                             required
                                             value={form.name}
@@ -101,10 +103,11 @@ export default function WaitlistModal({ open, onClose }: WaitlistModalProps) {
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-xs font-semibold uppercase tracking-[0.08em] text-text-tertiary mb-2">
+                                        <label htmlFor="waitlist-email" className="block text-xs font-semibold uppercase tracking-[0.08em] text-text-tertiary mb-2">
                                             Email
                                         </label>
                                         <input
+                                            id="waitlist-email"
                                             type="email"
                                             required
                                             value={form.email}
@@ -116,10 +119,11 @@ export default function WaitlistModal({ open, onClose }: WaitlistModalProps) {
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-xs font-semibold uppercase tracking-[0.08em] text-text-tertiary mb-2">
+                                        <label htmlFor="waitlist-company" className="block text-xs font-semibold uppercase tracking-[0.08em] text-text-tertiary mb-2">
                                             Company
                                         </label>
                                         <input
+                                            id="waitlist-company"
                                             type="text"
                                             required
                                             value={form.company}

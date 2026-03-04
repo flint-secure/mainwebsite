@@ -119,9 +119,9 @@ export default function NetworkTimeline() {
                                             {event.badge}
                                         </span>
                                     </div>
-                                    <h4 className="text-[18px] font-semibold text-text-primary leading-[1.3]">
+                                    <h3 className="text-[18px] font-semibold text-text-primary leading-[1.3]">
                                         {event.title}
-                                    </h4>
+                                    </h3>
                                     <p className="mt-2 text-[14px] text-text-secondary leading-[1.6]">
                                         {event.body}
                                     </p>

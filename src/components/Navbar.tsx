@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import Link from "next/link";
 import WaitlistModal from "./WaitlistModal";
 
 const navLinks = [
@@ -53,12 +54,12 @@ export default function Navbar() {
             >
                 <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 flex items-center justify-between">
                     {/* Logo */}
-                    <a
+                    <Link
                         href="/"
                         className="text-text-primary font-bold text-xl tracking-[0.05em]"
                     >
                         flint
-                    </a>
+                    </Link>
 
                     {/* Center Nav - Desktop */}
                     <div className="hidden lg:flex items-center gap-8">
