@@ -92,8 +92,8 @@ export default function Hero() {
         if (animRef.current) return;
         animRef.current = true;
 
-        const startDelay = 800;
-        const lineDelay = 150;
+        const startDelay = 200;
+        const lineDelay = 40;
 
         // Animate request lines
         let currentLine = 0;
@@ -114,7 +114,7 @@ export default function Hero() {
                             clearInterval(responseTimer);
                         }
                     }, lineDelay);
-                }, 400);
+                }, 80);
             }
         }, lineDelay);
 
