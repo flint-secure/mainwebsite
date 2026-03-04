@@ -372,11 +372,13 @@ export default function LiveDemo() {
                             </label>
                             <button
                                 type="button"
-                                aria-label="Toggle VPN detected"
-                                aria-pressed={inputs.vpn}
+                                role="switch"
+                                aria-checked={inputs.vpn}
                                 className={`toggle-switch ${inputs.vpn ? "active" : ""}`}
                                 onClick={() => setInputs({ ...inputs, vpn: !inputs.vpn })}
-                            />
+                            >
+                                <span className="sr-only">Toggle VPN detected</span>
+                            </button>
                         </div>
                     </div>
 
