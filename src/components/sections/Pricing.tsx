@@ -147,7 +147,7 @@ export default function Pricing() {
                             <button
                                 onClick={() => {
                                     if (plan.ctaStyle === "ghost" && plan.name === "Enterprise") {
-                                        window.location.href = "mailto:hello@flintsecure.com?subject=Enterprise%20Inquiry";
+                                        window.location.href = "mailto:hello@.com?subject=Enterprise%20Inquiry";
                                     } else {
                                         setModalOpen(true);
                                     }

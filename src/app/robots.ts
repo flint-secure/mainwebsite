@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: "/api/",
     },
-    sitemap: "https://flintsecure.com/sitemap.xml",
+    sitemap: "https://flintsecure.app/sitemap.xml",
   };
 }

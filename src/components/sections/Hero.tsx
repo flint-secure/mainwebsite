@@ -232,7 +232,7 @@ export default function Hero() {
                                     <span className="w-2.5 h-2.5 rounded-full bg-green" />
                                 </div>
                                 <span className="text-[12px] text-text-tertiary font-mono">
-                                    api.flintsecure.com
+                                    api.flintsecure.app
                                 </span>
                             </div>
 

@@ -15,7 +15,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://flintsecure.com"),
+  metadataBase: new URL("https://flintsecure.app"),
   title: {
     default: "Flint — Real-Time Fraud Detection API for Digital Payments",
     template: "%s | Flint",
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     description:
       "Every transaction scored in under 50ms. Device fingerprinting, behavioral analysis, and network intelligence. One API call before money moves.",
     type: "website",
-    url: "https://flintsecure.com",
+    url: "https://flintsecure.app",
     siteName: "Flint",
     locale: "en_US",
     images: [
@@ -98,7 +98,7 @@ export default function RootLayout({
     author: {
       "@type": "Organization",
       name: "Flint",
-      url: "https://flintsecure.com",
+      url: "https://flintsecure.app",
     },
   };
 

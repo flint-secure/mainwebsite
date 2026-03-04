@@ -54,10 +54,10 @@ export default function Navbar() {
                 <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 flex items-center justify-between">
                     {/* Logo */}
                     <a
-                        href="#hero"
+                        href="/"
                         className="text-text-primary font-bold text-xl tracking-[0.05em]"
                     >
-                        FLINT
+                        flint
                     </a>
 
                     {/* Center Nav - Desktop */}

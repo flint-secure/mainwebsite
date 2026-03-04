@@ -68,10 +68,10 @@ export default function Footer() {
                             Real-time fraud intelligence for digital payments.
                         </p>
                         <a
-                            href="mailto:hello@flintsecure.com"
+                            href="mailto:hello.flintsecure@gmail.com"
                             className="inline-block mt-4 text-[14px] text-amber-500 hover:text-amber-400 transition-colors"
                         >
-                            hello@flintsecure.com
+                            hello.flintsecure@gmail.com
                         </a>
                     </div>
 

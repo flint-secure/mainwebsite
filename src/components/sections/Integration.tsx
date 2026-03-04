@@ -11,14 +11,14 @@ const tabs = ["JavaScript", "Python", "Go", "Java", "PHP", "cURL"];
 // Full code strings for clean rendering
 const fullCode: Record<string, string> = {
     JavaScript: `// 1. Add SDK to your app (one time)
-// <script src="https://cdn.flintsecure.com/v1/fp.js"></script>
+// <script src="https://cdn.flintsecure.app/v1/fp.js"></script>
 
 // 2. Get device fingerprint
 const fp = await FlintFP.load({ apiKey: 'YOUR_KEY' })
 const { fingerprint } = await fp.get()
 
 // 3. Score transaction before processing
-const response = await fetch('https://api.flintsecure.com/v1/score', {
+const response = await fetch('https://api.flintsecure.app/v1/score', {
   method: 'POST',
   headers: {
     'Authorization': 'Bearer YOUR_API_KEY',
@@ -42,7 +42,7 @@ if (decision === 'BLOCK') rejectTransaction()`,
     Python: `import requests
 
 response = requests.post(
-    "https://api.flintsecure.com/v1/score",
+    "https://api.flintsecure.app/v1/score",
     headers={"Authorization": "Bearer YOUR_API_KEY"},
     json={
         "sender_id": user_id,
@@ -120,7 +120,7 @@ match ($response->decision) {
     'BLOCK' => rejectTransaction(),
 };`,
 
-    cURL: `curl -X POST https://api.flintsecure.com/v1/score \\
+    cURL: `curl -X POST https://api.flintsecure.app/v1/score \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
