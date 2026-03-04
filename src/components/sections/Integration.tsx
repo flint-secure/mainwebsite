@@ -6,34 +6,7 @@ import { Shield, Server } from "lucide-react";
 
 const tabs = ["JavaScript", "Python", "Go", "Java", "PHP", "cURL"];
 
-const codeExamples: Record<string, { lines: Array<{ text: string; className?: string }> }> = {
-    JavaScript: {
-        lines: [
-            { text: "// 1. Add SDK to your app (one time)", className: "text-[#71717A]" },
-            { text: '// <script src="https://cdn.flintsecure.com/v1/fp.js"></script>', className: "text-[#71717A]" },
-            { text: "" },
-            { text: "// 2. Get device fingerprint", className: "text-[#71717A]" },
-            { text: "" },
-            { text: "const", className: "text-[#C084FC]" },
-            { text: " fp = " },
-            { text: "await", className: "text-[#C084FC]" },
-            { text: " FlintFP." },
-            { text: "load", className: "text-[#FBBF24]" },
-            { text: "({ " },
-            { text: "apiKey", className: "text-[#60A5FA]" },
-            { text: ": " },
-            { text: "'YOUR_KEY'", className: "text-[#22C55E]" },
-            { text: " })" },
-        ],
-    },
-    Python: {
-        lines: [],
-    },
-    Go: { lines: [] },
-    Java: { lines: [] },
-    PHP: { lines: [] },
-    cURL: { lines: [] },
-};
+
 
 // Full code strings for clean rendering
 const fullCode: Record<string, string> = {
@@ -165,56 +138,9 @@ match ($response->decision) {
 # }`,
 };
 
-// Syntax highlighting helper
-function highlightCode(code: string, lang: string) {
-    const lines = code.split("\n");
-    return lines.map((line, i) => {
-        let highlighted = line;
 
-        // Comments
-        if (lang === "Python" && line.trimStart().startsWith("#")) {
-            return <div key={i} className="text-[#71717A]">{line}</div>;
-        }
-        if ((lang === "JavaScript" || lang === "Java" || lang === "Go" || lang === "PHP") && line.trimStart().startsWith("//")) {
-            return <div key={i} className="text-[#71717A]">{line}</div>;
-        }
-        if (lang === "cURL" && line.trimStart().startsWith("#")) {
-            return <div key={i} className="text-[#71717A]">{line}</div>;
-        }
 
-        // Simple token replacement
-        const tokens: Array<{ pattern: RegExp; className: string }> = [
-            { pattern: /(const |let |var |import |from |await |async |if |else |return |switch |case |defer |try |catch |match )/g, className: "text-[#C084FC]" },
-            { pattern: /('[^']*'|"[^"]*")/g, className: "text-[#22C55E]" },
-            { pattern: /\b(\d+)\b/g, className: "text-[#F59E0B]" },
-        ];
-
-        // Build segments
-        const parts: Array<{ text: string; className?: string }> = [];
-        let remaining = highlighted;
-        let safeguard = 0;
-
-        // Simple approach: just render as plain text with basic coloring
-        if (remaining.length > 0) {
-            parts.push({ text: remaining });
-        }
-
-        // For simplicity, render each line with basic highlighting
-        void tokens;
-        return (
-            <div key={i} className="text-text-code">
-                {line || "\u00A0"}
-            </div>
-        );
-    });
-}
-
-const fadeUp = {
-    initial: { opacity: 0, y: 30 } as const,
-    whileInView: { opacity: 1, y: 0 } as const,
-    transition: { duration: 0.6, ease: [0.25, 0.1, 0.25, 1] },
-    viewport: { once: true, margin: "-100px" },
-};
+import { fadeUp } from "@/lib/animations";
 
 export default function Integration() {
     const [activeTab, setActiveTab] = useState("JavaScript");
@@ -272,7 +198,7 @@ export default function Integration() {
                             {/* Code content */}
                             <div className="py-6 px-6 overflow-x-auto">
                                 <pre className="font-mono text-[13px] leading-[1.6]">
-                                    {highlightCode(fullCode[activeTab], activeTab)}
+                                    {fullCode[activeTab]}
                                 </pre>
                             </div>
                         </div>
