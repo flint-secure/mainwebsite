@@ -20,7 +20,7 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Flint — Real-Time Fraud Detection API for Digital Payments",
+    default: "Flint | Real-Time Fraud Detection API for Digital Payments",
     template: "%s | Flint",
   },
   description:
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     shortcut: "/favicon.ico",
   },
   openGraph: {
-    title: "Flint — Real-Time Fraud Detection API",
+    title: "Flint | Real-Time Fraud Detection API",
     description:
       "Every transaction scored in under 50ms. Device fingerprinting, behavioral analysis, and network intelligence. One API call before money moves.",
     type: "website",
@@ -65,7 +65,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Flint — Real-Time Fraud Detection API",
+    title: "Flint | Real-Time Fraud Detection API",
     description:
       "Every transaction scored in under 50ms. Open source SDKs. Built for South Asian payments.",
     creator: "@flintsecure",
