@@ -91,12 +91,12 @@ export default function Navbar() {
                         >
                             Documentation
                         </a>
-                        <button
-                            onClick={() => setModalOpen(true)}
+                        <Link
+                            href="/login"
                             className="text-sm font-semibold bg-amber-500 text-bg-primary px-5 py-2 rounded-lg hover:bg-amber-400 transition-all duration-150 hover:scale-[1.02] cursor-pointer"
                         >
-                            Get API Key
-                        </button>
+                            Login
+                        </Link>
                     </div>
 
                     {/* Mobile hamburger */}
@@ -129,15 +129,15 @@ export default function Navbar() {
                                 {link.label}
                             </a>
                         ))}
-                        <button
+                        <Link
+                            href="/login"
                             onClick={() => {
                                 setMobileOpen(false);
-                                setModalOpen(true);
                             }}
                             className="mt-4 text-base font-semibold bg-amber-500 text-bg-primary px-8 py-3 rounded-lg cursor-pointer"
                         >
-                            Get API Key
-                        </button>
+                            Login
+                        </Link>
                     </motion.div>
                 )}
             </AnimatePresence>

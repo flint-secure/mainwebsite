@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
+import Chatbot from "@/components/Chatbot";
 
 const siteUrl = getSiteUrl();
 
@@ -91,22 +92,49 @@ export default function RootLayout({
 }>) {
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    name: "Flint",
-    operatingSystem: "Cloud",
-    applicationCategory: "SecurityApplication",
-    description:
-      "Real-time fraud detection API for digital payments using device intelligence and behavioral analysis.",
-    offers: {
-      "@type": "Offer",
-      price: "0",
-      priceCurrency: "USD",
-    },
-    author: {
-      "@type": "Organization",
-      name: "Flint",
-      url: siteUrl,
-    },
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "@id": `${siteUrl}/#software`,
+        "name": "Flint",
+        "operatingSystem": "Cloud",
+        "applicationCategory": "SecurityApplication",
+        "description": "Real-time fraud detection API for digital payments using device intelligence and behavioral analysis.",
+        "url": siteUrl,
+        "author": { "@id": `${siteUrl}/#organization` },
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      },
+      {
+        "@type": "Organization",
+        "@id": `${siteUrl}/#organization`,
+        "name": "Flint",
+        "url": siteUrl,
+        "logo": {
+          "@type": "ImageObject",
+          "url": `${siteUrl}/favicon.png`
+        },
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "email": "hello.flintsecure@gmail.com",
+          "contactType": "customer support"
+        },
+        "sameAs": [
+          "https://twitter.com/flintsecure"
+        ]
+      },
+      {
+        "@type": "Person",
+        "@id": `${siteUrl}/#founder`,
+        "name": "Flint Founders",
+        "url": siteUrl,
+        "worksFor": { "@id": `${siteUrl}/#organization` },
+        "jobTitle": "Founder"
+      }
+    ]
   };
 
   return (
@@ -121,6 +149,7 @@ export default function RootLayout({
         className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}
       >
         {children}
+        <Chatbot />
       </body>
     </html>
   );

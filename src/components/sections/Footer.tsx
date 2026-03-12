@@ -83,7 +83,7 @@ export default function Footer() {
                 {/* Bottom bar */}
                 <div className="mt-12 pt-6 border-t border-border-subtle flex flex-col sm:flex-row items-center justify-between gap-4">
                     <p className="text-[13px] text-text-tertiary">
-                        © 2025 Flint Secure
+                        © 2026 Flint Secure
                     </p>
                     <div className="text-[13px] text-text-tertiary flex gap-4">
                         <a href="#" className="hover:text-text-secondary transition-colors">
