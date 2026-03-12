@@ -78,7 +78,7 @@ export const metadata: Metadata = {
       "Every transaction scored in under 50ms. Open source SDKs. Built for South Asian payments.",
     site: "@flintsecure",
     creator: "@flintsecure",
-    images: ["/og-image.png"],
+    images: ["/logo.png"],
   },
   robots: {
     index: true,
