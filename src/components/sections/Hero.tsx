@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import WaitlistModal from "../WaitlistModal";
+import { Reveal } from "../Reveal";
 
 const headlineLines = [
     { text: "Every transaction.", highlight: false },
@@ -92,172 +93,153 @@ export default function Hero() {
         if (animRef.current) return;
         animRef.current = true;
 
-        const startDelay = 200;
-        const lineDelay = 40;
+        const startDelay = 800;
+        const lineDelay = 60;
 
-        // Animate request lines
-        let currentLine = 0;
-        const requestTimer = setInterval(() => {
-            currentLine++;
-            setVisibleRequestLines(currentLine);
-            if (currentLine >= requestLines.length) {
-                clearInterval(requestTimer);
-                // Show divider after pause
-                setTimeout(() => {
-                    setShowDivider(true);
-                    // Animate response lines
-                    let responseLine = 0;
-                    const responseTimer = setInterval(() => {
-                        responseLine++;
-                        setVisibleResponseLines(responseLine);
-                        if (responseLine >= responseLines.length) {
-                            clearInterval(responseTimer);
-                        }
-                    }, lineDelay);
-                }, 80);
-            }
-        }, lineDelay);
-
-        setTimeout(() => setAnimationStarted(true), startDelay);
-
-        return () => clearInterval(requestTimer);
+        setTimeout(() => {
+            setAnimationStarted(true);
+            let currentLine = 0;
+            const requestTimer = setInterval(() => {
+                currentLine++;
+                setVisibleRequestLines(currentLine);
+                if (currentLine >= requestLines.length) {
+                    clearInterval(requestTimer);
+                    setTimeout(() => {
+                        setShowDivider(true);
+                        let responseLine = 0;
+                        const responseTimer = setInterval(() => {
+                            responseLine++;
+                            setVisibleResponseLines(responseLine);
+                            if (responseLine >= responseLines.length) {
+                                clearInterval(responseTimer);
+                            }
+                        }, lineDelay);
+                    }, 400);
+                }
+            }, lineDelay);
+        }, startDelay);
     }, []);
 
     return (
         <section
             id="hero"
-            className="min-h-screen flex items-center relative overflow-hidden pt-16"
+            className="min-h-screen flex items-center relative overflow-hidden pt-20"
             style={{
-                background: "linear-gradient(180deg, #09090B 0%, #0F0F13 100%)",
+                background: "radial-gradient(circle at 50% 50%, #111115 0%, #09090B 100%)",
             }}
         >
-            <div className="w-full max-w-[1200px] mx-auto px-6 md:px-12 lg:px-16 py-20 lg:py-0">
-                <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+            {/* Ambient Background */}
+            <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-amber-500/5 blur-[120px] rounded-full pointer-events-none" />
+
+            <div className="w-full max-w-[1200px] mx-auto px-6 md:px-12 lg:px-16 py-20 relative z-10">
+                <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
                     {/* Left Column */}
                     <div className="flex-1 lg:max-w-[55%]">
-                        <motion.span
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5 }}
-                            className="inline-block text-[13px] font-semibold uppercase tracking-[0.08em] text-amber-500 mb-6"
-                        >
-                            REAL-TIME FRAUD INTELLIGENCE
-                        </motion.span>
+                        <Reveal delay={0.1} y={20}>
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[12px] font-bold tracking-wider uppercase mb-8">
+                                Real-time fraud intelligence
+                            </div>
+                        </Reveal>
 
-                        <h1 className="sr-only">
-                            Every transaction. Scored in 47ms. Before money moves.
-                        </h1>
-                        <div className="space-y-1" aria-hidden="true">
+                        <div className="space-y-2">
                             {headlineLines.map((line, i) => (
-                                <motion.div
-                                    key={i}
-                                    initial={{ opacity: 0, y: 30 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{
-                                        duration: 0.6,
-                                        delay: 0.2 + i * 0.15,
-                                        ease: [0.25, 0.1, 0.25, 1],
-                                    }}
-                                    className="text-[40px] md:text-[56px] lg:text-[64px] font-bold leading-[1.1] tracking-[-0.03em] text-text-primary"
-                                >
-                                    {line.text}
-                                    {line.suffix && (
-                                        <span className="text-amber-500">{line.suffix}</span>
-                                    )}
-                                    {line.text === "Before money moves." && ""}
-                                </motion.div>
+                                <Reveal key={i} delay={0.2 + i * 0.1} y={30}>
+                                    <div className="text-[42px] md:text-[64px] lg:text-[72px] font-bold leading-[1.05] tracking-[-0.04em] text-text-primary">
+                                        {line.text}
+                                        {line.suffix && (
+                                            <span className="text-amber-500 italic ml-2">{line.suffix}</span>
+                                        )}
+                                    </div>
+                                </Reveal>
                             ))}
                         </div>
 
-                        <motion.p
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.6, delay: 0.7 }}
-                            className="mt-6 text-[17px] md:text-[20px] font-normal text-text-secondary leading-[1.6] max-w-[540px]"
-                        >
-                            Flint is a real-time fraud detection API for digital payment
-                            companies. Device intelligence, behavioral analysis, and
-                            cross-platform network intelligence — one API call, one
-                            decision, before the transaction processes.
-                        </motion.p>
+                        <Reveal delay={0.6}>
+                            <p className="mt-8 text-[18px] md:text-[21px] font-normal text-text-secondary leading-[1.6] max-w-[540px]">
+                                Flint scores every transaction in under 50ms using device intelligence and behavioral analysis. One API call, before money moves.
+                            </p>
+                        </Reveal>
 
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.6, delay: 0.9 }}
-                            className="mt-10 flex flex-col sm:flex-row gap-4"
-                        >
-                            <button
-                                onClick={() => setModalOpen(true)}
-                                className="text-base font-semibold bg-amber-500 text-bg-primary px-7 py-3.5 rounded-lg hover:bg-amber-400 transition-all duration-150 hover:scale-[1.02] cursor-pointer"
-                            >
-                                Start Free Trial
-                            </button>
-                            <a
-                                href="#integration"
-                                className="text-base font-medium text-text-primary px-7 py-3.5 rounded-lg border border-border-subtle hover:border-border-hover transition-all duration-200 text-center"
-                            >
-                                Read Documentation →
-                            </a>
-                        </motion.div>
+                        <Reveal delay={0.8}>
+                            <div className="mt-12 flex flex-col sm:flex-row gap-5">
+                                <button
+                                    onClick={() => setModalOpen(true)}
+                                    className="text-[16px] font-bold bg-amber-500 text-bg-primary px-8 py-4 rounded-xl hover:bg-amber-400 transition-all duration-200 hover:scale-[1.02] shadow-[0_8px_25px_rgba(245,158,11,0.25)] cursor-pointer"
+                                >
+                                    Start Free Trial
+                                </button>
+                                <a
+                                    href="#integration"
+                                    className="text-[16px] font-bold text-text-primary px-8 py-4 rounded-xl border border-border-subtle hover:border-amber-500/30 hover:bg-amber-500/5 transition-all duration-200 text-center"
+                                >
+                                    View Demo →
+                                </a>
+                            </div>
+                        </Reveal>
 
-                        <motion.p
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ duration: 0.6, delay: 1.1 }}
-                            className="mt-8 text-[13px] text-text-tertiary"
-                        >
-                            Open source SDKs · MIT Licensed · Fail-open by design
-                        </motion.p>
+                        <Reveal delay={1.0}>
+                            <div className="mt-10 flex items-center gap-6">
+                                <div className="flex -space-x-3">
+                                    {[1, 2, 3, 4].map((i) => (
+                                        <div key={i} className="w-8 h-8 rounded-full border-2 border-bg-primary bg-bg-tertiary" />
+                                    ))}
+                                </div>
+                                <p className="text-[13px] text-text-tertiary">
+                                    Trusted by <span className="text-text-secondary font-semibold">50+ fintech teams</span>
+                                </p>
+                            </div>
+                        </Reveal>
                     </div>
 
                     {/* Right Column - Terminal */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: animationStarted ? 1 : 0, y: animationStarted ? 0 : 30 }}
-                        transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
-                        className="flex-1 w-full lg:max-w-[45%]"
-                    >
-                        <div
-                            className="bg-bg-code border border-border-subtle rounded-xl overflow-hidden"
-                            style={{
-                                boxShadow: "0 0 120px rgba(245,158,11,0.08)",
-                            }}
-                        >
-                            {/* Terminal top bar */}
-                            <div className="flex items-center justify-between px-5 py-3 border-b border-border-subtle">
-                                <div className="flex gap-2">
-                                    <span className="w-2.5 h-2.5 rounded-full bg-red" />
-                                    <span className="w-2.5 h-2.5 rounded-full bg-yellow" />
-                                    <span className="w-2.5 h-2.5 rounded-full bg-green" />
-                                </div>
-                                <span className="text-[12px] text-text-tertiary font-mono">
-                                    api.flintsecure.app
-                                </span>
-                            </div>
-
-                            {/* Code content */}
-                            <div className="p-5 font-mono text-[12px] md:text-[13px] leading-[1.7] space-y-0.5 min-h-[380px]">
-                                {requestLines.map((line, i) => (
-                                    <CodeLine key={`req-${i}`} line={line as Record<string, unknown>} visible={i < visibleRequestLines} />
-                                ))}
-
-                                {showDivider && (
-                                    <div className="my-3 flex items-center gap-2 text-text-tertiary text-[11px]">
-                                        <span className="flex-1 h-px bg-border-subtle" />
-                                        <span>
-                                            Response · <span className="text-amber-500">47ms</span>
-                                        </span>
-                                        <span className="flex-1 h-px bg-border-subtle" />
+                    <Reveal delay={0.4} y={40} width="100%">
+                        <div className="flex-1 w-full lg:max-w-[480px]">
+                            <div
+                                className="bg-[#0C0C0F] border border-border-subtle rounded-2xl overflow-hidden shadow-2xl relative"
+                                style={{
+                                    boxShadow: "0 20px 50px rgba(0,0,0,0.5), 0 0 120px rgba(245,158,11,0.05)",
+                                }}
+                            >
+                                {/* Terminal top bar */}
+                                <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-bg-secondary/50">
+                                    <div className="flex gap-1">
+                                        <div className="w-8 h-1 rounded-full bg-border-subtle" />
                                     </div>
-                                )}
+                                    <span className="text-[11px] text-text-tertiary font-mono uppercase tracking-widest">
+                                        status: live
+                                    </span>
+                                </div>
 
-                                {responseLines.map((line, i) => (
-                                    <CodeLine key={`res-${i}`} line={line as Record<string, unknown>} visible={showDivider && i < visibleResponseLines} />
-                                ))}
+                                {/* Code content */}
+                                <div className="p-6 font-mono text-[13px] leading-[1.8] space-y-0.5 min-h-[420px]">
+                                    {requestLines.map((line, i) => (
+                                        <CodeLine key={`req-${i}`} line={line as Record<string, unknown>} visible={i < visibleRequestLines} />
+                                    ))}
+
+                                    {showDivider && (
+                                        <motion.div 
+                                            initial={{ opacity: 0, scale: 0.98 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            className="my-5 flex items-center gap-3 text-text-tertiary text-[11px]"
+                                        >
+                                            <span className="flex-1 h-px bg-border-subtle" />
+                                            <span className="font-bold uppercase tracking-tighter">
+                                                Response · <span className="text-amber-500">47ms</span>
+                                            </span>
+                                            <span className="flex-1 h-px bg-border-subtle" />
+                                        </motion.div>
+                                    )}
+
+                                    {responseLines.map((line, i) => (
+                                        <CodeLine key={`res-${i}`} line={line as Record<string, unknown>} visible={showDivider && i < visibleResponseLines} />
+                                    ))}
+                                </div>
+                                
+                                {/* Bottom Accent */}
+                                <div className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-amber-500/40 to-transparent" />
                             </div>
                         </div>
-                    </motion.div>
+                    </Reveal>
                 </div>
             </div>
 

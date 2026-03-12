@@ -140,28 +140,23 @@ match ($response->decision) {
 
 
 
-import { fadeUp } from "@/lib/animations";
-
 export default function Integration() {
     const [activeTab, setActiveTab] = useState("JavaScript");
 
     return (
         <section id="integration" className="py-24 md:py-40 bg-bg-tertiary">
             <div className="max-w-[1200px] mx-auto px-6 md:px-12 lg:px-16">
-                <motion.span {...fadeUp} className="block text-[13px] font-semibold uppercase tracking-[0.08em] text-amber-500 mb-6 text-center">
-                    INTEGRATION
-                </motion.span>
-                <motion.h2 {...fadeUp} className="text-[32px] md:text-[48px] font-bold leading-[1.15] tracking-[-0.025em] text-text-primary text-center">
-                    10 lines of code. Any stack.
-                </motion.h2>
-                <motion.p {...fadeUp} className="mt-6 text-[17px] text-text-secondary text-center max-w-[640px] mx-auto leading-[1.6]">
-                    Flint doesn&apos;t touch your system. Add our SDK to your app, add one
-                    API call to your backend. If Flint disappears tomorrow, your system
-                    works exactly as before.
-                </motion.p>
+                <h2 className="text-[32px] md:text-[48px] font-bold leading-[1.15] tracking-[-0.025em] text-text-primary text-center">
+                    Drop it into your stack
+                </h2>
+                <p className="mt-6 text-[17px] text-text-secondary text-center max-w-[640px] mx-auto leading-[1.6]">
+                    Add our SDK to your app, add one API call to your backend. If Flint
+                    disappears tomorrow, your system works exactly as before. Device
+                    fingerprinting SDKs are open source under the MIT license — <a href="https://github.com/flintsecure" className="text-text-primary underline underline-offset-2 hover:text-amber-500 transition-colors">read every line on GitHub</a>.
+                </p>
 
                 {/* Tabbed code block */}
-                <motion.div {...fadeUp} className="mt-12 max-w-[800px] mx-auto">
+                <div className="mt-12 max-w-[800px] mx-auto">
                     {/* Tabs */}
                     <div className="flex gap-1 overflow-x-auto border-b border-border-subtle">
                         {tabs.map((tab) => (
@@ -203,18 +198,12 @@ export default function Integration() {
                             </div>
                         </div>
                     </div>
-                </motion.div>
+                </div>
 
                 {/* Two cards */}
                 <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-6 max-w-[800px] mx-auto">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                        viewport={{ once: true }}
-                        className="bg-bg-secondary border border-border-subtle rounded-xl p-8 hover:border-border-hover transition-colors duration-200"
-                    >
-                        <Shield className="w-8 h-8 text-amber-500 mb-4" />
+                    <div className="bg-bg-secondary border border-border-subtle rounded-xl p-8 hover:border-border-hover transition-colors duration-200">
+                        <Shield className="w-8 h-8 text-green mb-4" />
                         <h3 className="text-[18px] font-bold text-text-primary">
                             Fail-Open by Design
                         </h3>
@@ -224,16 +213,10 @@ export default function Integration() {
                             as if Flint doesn&apos;t exist. Flint can never cause a payment to
                             fail.
                         </p>
-                    </motion.div>
+                    </div>
 
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.1 }}
-                        viewport={{ once: true }}
-                        className="bg-bg-secondary border border-border-subtle rounded-xl p-8 hover:border-border-hover transition-colors duration-200"
-                    >
-                        <Server className="w-8 h-8 text-amber-500 mb-4" />
+                    <div className="bg-bg-secondary border border-border-subtle rounded-xl p-8 hover:border-border-hover transition-colors duration-200">
+                        <Server className="w-8 h-8 text-text-secondary mb-4" />
                         <h3 className="text-[18px] font-bold text-text-primary">
                             Zero Infrastructure Change
                         </h3>
@@ -242,7 +225,7 @@ export default function Integration() {
                             manage. Add a few lines of code to your app and backend.
                             Everything runs on Flint&apos;s infrastructure. Remove it anytime.
                         </p>
-                    </motion.div>
+                    </div>
                 </div>
             </div>
         </section>
