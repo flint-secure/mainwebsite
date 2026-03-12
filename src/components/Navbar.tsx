@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import WaitlistModal from "./WaitlistModal";
 
 const navLinks = [
@@ -53,14 +54,17 @@ export default function Navbar() {
                     }`}
             >
                 <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 flex items-center justify-between">
-                    {/* Logo */}
                     <Link
                         href="/"
                         className="text-text-primary font-bold text-2xl tracking-[-0.04em] flex items-center gap-2 group"
                     >
-                        <div className="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
-                           <div className="w-4 h-4 bg-bg-primary rounded-sm" />
-                        </div>
+                        <Image
+                            src="/logo.png"
+                            alt="Flint Logo"
+                            width={32}
+                            height={32}
+                            className="rounded-lg group-hover:rotate-12 transition-transform duration-300"
+                        />
                         flint
                     </Link>
 

@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { MessageCircle, X, Send, Bot, Mail } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import Clarity from "@microsoft/clarity";
 
 interface Message {
     id: string;
@@ -58,6 +59,7 @@ export default function Chatbot() {
         setMessages(prev => [...prev, userMsg]);
         setInputValue("");
         setIsTyping(true);
+        Clarity.setTag("action", "chatbot_message_sent");
 
         setTimeout(() => {
             const botMsg: Message = {
@@ -115,7 +117,13 @@ export default function Chatbot() {
                     }}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={() => setIsOpen(!isOpen)}
+                    onClick={() => {
+                        const newOpenState = !isOpen;
+                        setIsOpen(newOpenState);
+                        if (newOpenState) {
+                            Clarity.setTag("action", "chatbot_opened");
+                        }
+                    }}
                     className="w-14 h-14 bg-amber-500 text-bg-primary rounded-full shadow-[0_8px_30px_rgb(245,158,11,0.3)] flex items-center justify-center cursor-pointer border-2 border-bg-primary relative overflow-hidden group"
                 >
                     {/* Animated background pulse */}

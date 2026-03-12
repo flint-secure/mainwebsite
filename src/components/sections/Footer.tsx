@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Reveal } from "../Reveal";
 
 const productLinks = [
@@ -60,9 +61,13 @@ export default function Footer() {
                     {/* Brand */}
                     <div className="col-span-2 md:col-span-2">
                         <div className="flex items-center gap-2 mb-6">
-                            <div className="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center">
-                                <div className="w-4 h-4 bg-bg-primary rounded-sm" />
-                            </div>
+                            <Image
+                                src="/logo.png"
+                                alt="Flint Logo"
+                                width={32}
+                                height={32}
+                                className="rounded-lg"
+                            />
                             <span className="text-text-primary font-bold text-2xl tracking-tight">flint</span>
                         </div>
                         <p className="text-[15px] text-text-tertiary max-w-[280px] leading-[1.7] mb-8">
