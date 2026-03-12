@@ -7,10 +7,9 @@ import MouseEffect from "@/components/MouseEffect";
 const HowItWorks = dynamic(() => import("@/components/sections/HowItWorks"), { ssr: true });
 const LiveDemo = dynamic(() => import("@/components/sections/LiveDemo"), { ssr: true });
 const Capabilities = dynamic(() => import("@/components/sections/Capabilities"), { ssr: true });
-const NetworkTimeline = dynamic(() => import("@/components/sections/NetworkTimeline"), { ssr: true });
 const Integration = dynamic(() => import("@/components/sections/Integration"), { ssr: true });
 const Performance = dynamic(() => import("@/components/sections/Performance"), { ssr: true });
-const OpenSource = dynamic(() => import("@/components/sections/OpenSource"), { ssr: true });
+const Founders = dynamic(() => import("@/components/sections/Founders"), { ssr: true });
 const Pricing = dynamic(() => import("@/components/sections/Pricing"), { ssr: true });
 const Footer = dynamic(() => import("@/components/sections/Footer"), { ssr: true });
 
@@ -30,10 +29,9 @@ export default function Home() {
         <HowItWorks />
         <LiveDemo />
         <Capabilities />
-        <NetworkTimeline />
         <Integration />
         <Performance />
-        <OpenSource />
+        <Founders />
         <Pricing />
       </main>
       <Footer />

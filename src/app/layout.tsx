@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 import Chatbot from "@/components/Chatbot";
+import Clarity from "@/components/Clarity";
 
 const siteUrl = getSiteUrl();
 
@@ -36,8 +37,13 @@ export const metadata: Metadata = {
     "digital payments",
     "open source",
     "fraud prevention",
+    "fintech security",
+    "South Asia fintech",
   ],
-  authors: [{ name: "Flint Team" }],
+  authors: [
+    { name: "Apil Khadka", url: "https://github.com/apil-khadka" },
+    { name: "Aaditya Binodya Yadav", url: "https://github.com/aadityabinodyadav" }
+  ],
   creator: "Flint Team",
   publisher: "Flint",
   alternates: {
@@ -46,6 +52,7 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
+    apple: "/logo.png",
   },
   openGraph: {
     title: "Flint | Real-Time Fraud Detection API",
@@ -57,10 +64,10 @@ export const metadata: Metadata = {
     locale: "en_US",
     images: [
       {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "Flint Fraud Detection Dashboard",
+        url: "/logo.png",
+        width: 512,
+        height: 512,
+        alt: "Flint Logo",
       },
     ],
   },
@@ -69,8 +76,9 @@ export const metadata: Metadata = {
     title: "Flint | Real-Time Fraud Detection API",
     description:
       "Every transaction scored in under 50ms. Open source SDKs. Built for South Asian payments.",
+    site: "@flintsecure",
     creator: "@flintsecure",
-    images: ["/og-image.png"],
+    images: ["/logo.png"],
   },
   robots: {
     index: true,
@@ -115,7 +123,7 @@ export default function RootLayout({
         "url": siteUrl,
         "logo": {
           "@type": "ImageObject",
-          "url": `${siteUrl}/favicon.png`
+          "url": `${siteUrl}/logo.png`
         },
         "contactPoint": {
           "@type": "ContactPoint",
@@ -128,11 +136,25 @@ export default function RootLayout({
       },
       {
         "@type": "Person",
-        "@id": `${siteUrl}/#founder`,
-        "name": "Flint Founders",
-        "url": siteUrl,
-        "worksFor": { "@id": `${siteUrl}/#organization` },
-        "jobTitle": "Founder"
+        "name": "Apil Khadka",
+        "jobTitle": "Founder & Founding Engineer",
+        "url": "https://linkedin.com/in/apil-khadka",
+        "image": "https://avatars.githubusercontent.com/u/87198819?v=4",
+        "sameAs": [
+          "https://github.com/apil-khadka",
+          "https://linkedin.com/in/apil-khadka"
+        ],
+        "worksFor": { "@id": `${siteUrl}/#organization` }
+      },
+      {
+        "@type": "Person",
+        "name": "Aaditya Binodya Yadav",
+        "jobTitle": "Founder & Founding Engineer",
+        "image": "https://avatars.githubusercontent.com/u/150529501?v=4",
+        "sameAs": [
+          "https://github.com/aadityabinodyadav"
+        ],
+        "worksFor": { "@id": `${siteUrl}/#organization` }
       }
     ]
   };
@@ -148,6 +170,7 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}
       >
+        <Clarity projectId="vuh584t40j" />
         {children}
         <Chatbot />
       </body>

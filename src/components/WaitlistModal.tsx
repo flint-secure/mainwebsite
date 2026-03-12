@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
+import Clarity from "@microsoft/clarity";
 
 interface WaitlistModalProps {
     open: boolean;
@@ -23,6 +24,8 @@ export default function WaitlistModal({ open, onClose }: WaitlistModalProps) {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(form),
             });
+            Clarity.setTag("action", "waitlist_signup");
+            Clarity.setTag("company", form.company);
             setSubmitted(true);
         } catch {
             setSubmitted(true);

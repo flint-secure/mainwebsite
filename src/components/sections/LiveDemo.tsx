@@ -113,7 +113,7 @@ function getScoreColor(score: number) {
 function generateSummary(inputs: Inputs, score: number, decision: string): string {
     const deviceLabel = inputs.device === "flagged" ? "Flagged device" : inputs.device === "new" ? "New device" : inputs.device === "known" ? "Recently added device" : "Trusted device";
     const timeStr = `${inputs.hour === 0 ? 12 : inputs.hour > 12 ? inputs.hour - 12 : inputs.hour}:00 ${inputs.hour >= 12 ? "PM" : "AM"}`;
-    const amountStr = `Rs ${inputs.amount.toLocaleString("en-IN")}`;
+    const amountStr = `Rs ${formatINR(inputs.amount)}`;
 
     if (decision === "ALLOW") {
         return `Low risk: ${deviceLabel} attempting ${amountStr} transfer at ${timeStr}. Transaction proceeds without friction.`;
@@ -235,7 +235,14 @@ function BreakdownBar({
     );
 }
 
-import { fadeUp } from "@/lib/animations";
+function formatINR(n: number): string {
+    if (n < 1000) return String(n);
+    const s = String(n);
+    const lastThree = s.slice(-3);
+    const rest = s.slice(0, -3);
+    const formatted = rest.replace(/\B(?=(\d{2})+(?!\d))/g, ",");
+    return formatted + "," + lastThree;
+}
 
 export default function LiveDemo() {
     const [inputs, setInputs] = useState<Inputs>({
@@ -260,22 +267,16 @@ export default function LiveDemo() {
     return (
         <section id="demo" className="py-24 md:py-40 bg-bg-primary">
             <div className="max-w-[1200px] mx-auto px-6 md:px-12 lg:px-16">
-                <motion.span {...fadeUp} className="block text-[13px] font-semibold uppercase tracking-[0.08em] text-amber-500 mb-6 text-center">
-                    TRY IT
-                </motion.span>
-                <motion.h2 {...fadeUp} className="text-[32px] md:text-[48px] font-bold leading-[1.15] tracking-[-0.025em] text-text-primary text-center">
+                <h2 className="text-[32px] md:text-[48px] font-bold leading-[1.15] tracking-[-0.025em] text-text-primary text-center">
                     Score a transaction. See the logic.
-                </motion.h2>
-                <motion.p {...fadeUp} className="mt-6 text-[17px] text-text-secondary text-center max-w-[640px] mx-auto leading-[1.6]">
+                </h2>
+                <p className="mt-6 text-[17px] text-text-secondary text-center max-w-[640px] mx-auto leading-[1.6]">
                     Adjust the parameters below and watch how the risk score changes. This
                     is a simplified version of the scoring logic. The production engine
                     uses 50+ signals and per-user behavioral profiles.
-                </motion.p>
+                </p>
 
-                <motion.div
-                    {...fadeUp}
-                    className="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-12"
-                >
+                <div className="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-12">
                     {/* Left - Inputs */}
                     <div className="space-y-8">
                         {/* Amount */}
@@ -285,7 +286,7 @@ export default function LiveDemo() {
                                     Transaction Amount
                                 </label>
                                 <span className="text-[14px] font-mono text-text-primary">
-                                    Rs {inputs.amount.toLocaleString("en-IN")}
+                                    Rs {formatINR(inputs.amount)}
                                 </span>
                             </div>
                             <input
@@ -414,7 +415,7 @@ export default function LiveDemo() {
                             {summary}
                         </p>
                     </div>
-                </motion.div>
+                </div>
             </div>
         </section>
     );
