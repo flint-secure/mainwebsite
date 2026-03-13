@@ -15,9 +15,11 @@ import {
     AuthError
 } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import WaitlistModal from "@/components/WaitlistModal";
 
 export default function LoginForm() {
     const [isLoading, setIsLoading] = useState(false);
+    const [showWaitlist, setShowWaitlist] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
@@ -191,14 +193,19 @@ export default function LoginForm() {
 
                 <p className="mt-8 text-center text-sm text-text-secondary">
                     Don&apos;t have an account?{" "}
-                    <a 
-                        href="mailto:hello.flintsecure@gmail.com?subject=Join%20Waitlist%20-%20Flint&body=Hi%20Flint%20Team%2C%0A%0AI%20would%20like%20to%20join%20the%20waitlist%20for%20Flint%20fraud%20detection.%20My%20company%20details%20are%20as%20follows%3A%0A%0ACompany%20Name%3A%20%0AWebsite%3A%20%0AApproximate%20Monthly%20Transactions%3A%20%0A%0ALooking%20forward%20to%20hearing%20from%20you!" 
-                        className="text-amber-500 hover:text-amber-400 font-bold transition-colors"
+                    <button 
+                        onClick={() => setShowWaitlist(true)}
+                        className="text-amber-500 hover:text-amber-400 font-bold transition-colors cursor-pointer bg-transparent border-none p-0"
                     >
                         Join Waitlist
-                    </a>
+                    </button>
                 </p>
             </motion.div>
+
+            <WaitlistModal 
+                open={showWaitlist} 
+                onClose={() => setShowWaitlist(false)} 
+            />
         </div>
     );
 }

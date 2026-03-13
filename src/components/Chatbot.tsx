@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Clarity from "@microsoft/clarity";
 import { db, ai } from "@/lib/firebase";
 import { collection, addDoc, serverTimestamp, doc, getDoc, setDoc, increment } from "firebase/firestore";
-import { getGenerativeModel } from "firebase/ai";
+import { getTemplateGenerativeModel } from "firebase/ai";
 
 interface Message {
     id: string;
@@ -156,17 +156,14 @@ export default function Chatbot() {
             });
 
             // AI Logic using the Template
-            const model = getGenerativeModel(ai, { 
-                templateId: "input-system-instructions"
-            } as any);
-
-            const result = await model.generateContent({
-                values: {
-                    userName: userInfo.name,
-                    userEmail: userInfo.email,
-                    userMessage: text
-                }
-            } as any);
+            const model = getTemplateGenerativeModel(ai, {
+                model: "gemini-2.5-flash-lite"
+            });
+            const result = await model.generateContent("input-system-instructions", {
+                userName: userInfo.name,
+                userEmail: userInfo.email,
+                userMessage: text
+            });
 
             const responseText = result.response.text();
 
