@@ -37,7 +37,7 @@ export const initFirebaseServices = async () => {
       ) {
         // This will log a debug token to the console which can be added 
         // to the Firebase Console -> App Check -> Manage debug tokens
-        (window as any).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+        (window as Window & { FIREBASE_APPCHECK_DEBUG_TOKEN?: boolean }).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
       }
 
       initializeAppCheck(app, {

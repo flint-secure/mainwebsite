@@ -156,9 +156,7 @@ export default function Chatbot() {
             });
 
             // AI Logic using the Template
-            const model = getTemplateGenerativeModel(ai, {
-                model: "gemini-2.5-flash-lite"
-            });
+            const model = getTemplateGenerativeModel(ai);
             const result = await model.generateContent("input-system-instructions", {
                 userName: userInfo.name,
                 userEmail: userInfo.email,
