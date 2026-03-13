@@ -180,7 +180,10 @@ export default function Integration() {
                     </div>
 
                     {/* Code */}
-                    <div className="bg-bg-code border border-border-subtle border-t-0 rounded-b-lg overflow-x-auto">
+                    <div 
+                        data-clarity-unmask="true"
+                        className="bg-bg-code border border-border-subtle border-t-0 rounded-b-lg overflow-x-auto"
+                    >
                         <div className="flex">
                             {/* Line numbers */}
                             <div className="py-6 pl-4 pr-3 border-r border-border-subtle select-none shrink-0">

@@ -2,11 +2,11 @@
 
 import { useEffect } from "react";
 import Script from "next/script";
-import { initAnalytics } from "@/lib/firebase";
+import { initFirebaseServices } from "@/lib/firebase";
 
 export default function Analytics() {
   useEffect(() => {
-    initAnalytics();
+    initFirebaseServices();
   }, []);
 
   const clarityId = "vuh584t40j";

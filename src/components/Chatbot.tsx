@@ -303,17 +303,49 @@ export default function Chatbot() {
                         </div>
 
                         {step === 'info' ? (
-                            <form onSubmit={handleInfoSubmit} className="p-4 bg-bg-secondary border-t border-border-subtle space-y-3">
+                            <div className="p-4 bg-bg-secondary border-t border-border-subtle space-y-3">
                                 <div className="relative">
                                     <User className="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary" size={14} />
-                                    <input required value={userInfo.name} onChange={e => setUserInfo({ ...userInfo, name: e.target.value })} placeholder="Full Name" className="w-full bg-bg-tertiary border border-border-subtle rounded-lg py-2 pl-9 pr-4 text-[13px] focus:outline-none focus:border-amber-500" />
+                                    <input 
+                                        required 
+                                        defaultValue={userInfo.name}
+                                        onBlur={e => setUserInfo(prev => ({ ...prev, name: e.target.value }))}
+                                        placeholder="Full Name" 
+                                        className="w-full bg-bg-tertiary border border-border-subtle rounded-lg py-2.5 pl-9 pr-4 text-[13px] text-text-primary focus:outline-none focus:border-amber-500 transition-colors" 
+                                    />
                                 </div>
                                 <div className="relative">
                                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary" size={14} />
-                                    <input required type="email" value={userInfo.email} onChange={e => setUserInfo({ ...userInfo, email: e.target.value })} placeholder="Email Address" className="w-full bg-bg-tertiary border border-border-subtle rounded-lg py-2 pl-9 pr-4 text-[13px] focus:outline-none focus:border-amber-500" />
+                                    <input 
+                                        required 
+                                        type="email" 
+                                        defaultValue={userInfo.email}
+                                        onBlur={e => setUserInfo(prev => ({ ...prev, email: e.target.value }))}
+                                        placeholder="Email Address" 
+                                        className="w-full bg-bg-tertiary border border-border-subtle rounded-lg py-2.5 pl-9 pr-4 text-[13px] text-text-primary focus:outline-none focus:border-amber-500 transition-colors" 
+                                    />
                                 </div>
-                                <button type="submit" className="w-full bg-amber-500 text-bg-primary font-bold py-2 rounded-lg text-[13px] hover:bg-amber-400 transition-colors">Start Chat</button>
-                            </form>
+                                <button 
+                                    type="button"
+                                    onClick={(e) => {
+                                        const form = e.currentTarget.closest('div');
+                                        const nameInput = form?.querySelector('input[placeholder="Full Name"]') as HTMLInputElement;
+                                        const emailInput = form?.querySelector('input[type="email"]') as HTMLInputElement;
+                                        
+                                        if (nameInput?.value && emailInput?.checkValidity()) {
+                                            setUserInfo({ name: nameInput.value, email: emailInput.value });
+                                            // Trigger the submission logic
+                                            setTimeout(() => {
+                                                const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
+                                                handleInfoSubmit(fakeEvent);
+                                            }, 0);
+                                        }
+                                    }}
+                                    className="w-full bg-amber-500 text-bg-primary font-bold py-2.5 rounded-lg text-[13px] hover:bg-amber-400 transition-colors cursor-pointer"
+                                >
+                                    Start Chat
+                                </button>
+                            </div>
                         ) : (
                             <div className="p-4 border-t border-border-subtle bg-bg-secondary">
                                 <form onSubmit={e => { e.preventDefault(); handleSend(); }} className="relative">

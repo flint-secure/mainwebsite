@@ -193,6 +193,7 @@ export default function Hero() {
                     <Reveal delay={0.4} y={40} width="100%">
                         <div className="flex-1 w-full lg:max-w-[480px]">
                             <div
+                                data-clarity-unmask="true"
                                 className="bg-[#0C0C0F] border border-border-subtle rounded-2xl overflow-hidden shadow-2xl relative"
                                 style={{
                                     boxShadow: "0 20px 50px rgba(0,0,0,0.5), 0 0 120px rgba(245,158,11,0.05)",
