@@ -2,7 +2,7 @@ import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAnalytics, isSupported } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-import { getAI, GoogleAIBackend } from "firebase/ai";
+import { getAI, VertexAIBackend } from "firebase/ai";
 import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 
 const firebaseConfig = {
@@ -20,9 +20,6 @@ const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Initialize the Gemini Developer API backend service
-const ai = getAI(app, { backend: new GoogleAIBackend() });
-
 // Initialize App Check IMMEDIATELY on the client side to prevent race conditions
 if (typeof window !== "undefined") {
   const recaptchaKey = "6Lduw4gsAAAAALefrkMe0RvEvZM6x1GqbyhWM4U9";
@@ -33,6 +30,8 @@ if (typeof window !== "undefined") {
       window.location.hostname === "localhost" || 
       window.location.hostname === "127.0.0.1"
     ) {
+      // Use a safer type augmentation or ignore the lint rule for this specific line
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window as any).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
     }
 
@@ -45,6 +44,9 @@ if (typeof window !== "undefined") {
     console.error("Firebase App Check initialization failed:", err);
   }
 }
+
+// Initialize the Vertex AI backend service (required for Firebase AI Logic Templates)
+const ai = getAI(app, { backend: new VertexAIBackend() });
 
 export const initFirebaseServices = async () => {
   if (typeof window !== "undefined") {
