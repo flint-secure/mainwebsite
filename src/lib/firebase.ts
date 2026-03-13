@@ -23,33 +23,32 @@ const db = getFirestore(app);
 // Initialize the Gemini Developer API backend service
 const ai = getAI(app, { backend: new GoogleAIBackend() });
 
-export const initFirebaseServices = async () => {
-  if (typeof window !== "undefined") {
-    // App Check Initialization
-    const recaptchaKey = "6Lduw4gsAAAAALefrkMe0RvEvZM6x1GqbyhWM4U9";
-    
-    try {
-      // Enable App Check debug token for localhost or specific environments if needed
-      if (
-        window.location.hostname === "localhost" || 
-        window.location.hostname === "127.0.0.1" ||
-        process.env.NODE_ENV === "development"
-      ) {
-        // This will log a debug token to the console which can be added 
-        // to the Firebase Console -> App Check -> Manage debug tokens
-        (window as Window & { FIREBASE_APPCHECK_DEBUG_TOKEN?: boolean }).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
-      }
-
-      initializeAppCheck(app, {
-        provider: new ReCaptchaV3Provider(recaptchaKey),
-        isTokenAutoRefreshEnabled: true
-      });
-      console.log("Firebase App Check initialized.");
-    } catch (err) {
-      console.error("Firebase App Check initialization failed:", err);
+// Initialize App Check IMMEDIATELY on the client side to prevent race conditions
+if (typeof window !== "undefined") {
+  const recaptchaKey = "6Lduw4gsAAAAALefrkMe0RvEvZM6x1GqbyhWM4U9";
+  
+  try {
+    // Enable App Check debug token for localhost
+    if (
+      window.location.hostname === "localhost" || 
+      window.location.hostname === "127.0.0.1"
+    ) {
+      (window as any).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
     }
 
-    // Analytics Initialization
+    initializeAppCheck(app, {
+      provider: new ReCaptchaV3Provider(recaptchaKey),
+      isTokenAutoRefreshEnabled: true
+    });
+    console.log("Firebase App Check initialized.");
+  } catch (err) {
+    console.error("Firebase App Check initialization failed:", err);
+  }
+}
+
+export const initFirebaseServices = async () => {
+  if (typeof window !== "undefined") {
+    // Analytics Initialization (Needs to stay in async check due to isSupported())
     try {
       const supported = await isSupported();
       if (supported) {
