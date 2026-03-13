@@ -2,6 +2,14 @@ import Image from "next/image";
 import { ExternalLink } from "lucide-react";
 
 const founders = [
+        {
+        name: "Aaditya Binod Yadav",
+        role: "Founding Engineer",
+        focus: "Full-stack and distributed systems. Builds the real-time scoring engine, ML pipelines, and fraud detection infrastructure.",
+        avatar: "https://avatars.githubusercontent.com/u/150529501?v=4",
+        github: "https://github.com/aadityabinodyadav",
+        linkedin: null,
+    },
     {
         name: "Apil Khadka",
         role: "Founding Engineer",
@@ -9,14 +17,6 @@ const founders = [
         avatar: "https://avatars.githubusercontent.com/u/87198819?v=4",
         github: "https://github.com/apil-khadka",
         linkedin: "https://linkedin.com/in/apil-khadka",
-    },
-    {
-        name: "Aaditya Binodya Yadav",
-        role: "Founding Engineer",
-        focus: "Full-stack and distributed systems. Builds the real-time scoring engine, ML pipelines, and fraud detection infrastructure.",
-        avatar: "https://avatars.githubusercontent.com/u/150529501?v=4",
-        github: "https://github.com/aadityabinodyadav",
-        linkedin: null,
     },
 ];
 
