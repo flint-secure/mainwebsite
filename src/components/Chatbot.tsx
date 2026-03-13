@@ -161,6 +161,9 @@ export default function Chatbot() {
                 userName: userInfo.name,
                 userEmail: userInfo.email,
                 userMessage: text
+            }, {
+                // @ts-expect-error - The property exists in newer versions or via the provided reference but might not be in local typings yet
+                isAppCheckTokenRequired: true
             });
 
             const responseText = result.response.text();
