@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { Reveal } from "../Reveal";
 
 const productLinks = [
     { label: "How It Works", href: "#how-it-works" },

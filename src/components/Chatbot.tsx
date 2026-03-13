@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { MessageCircle, X, Send, Bot, Mail } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Clarity from "@microsoft/clarity";
+import { db } from "@/lib/firebase";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 interface Message {
     id: string;
@@ -27,16 +29,15 @@ export default function Chatbot() {
     const [isTyping, setIsTyping] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    const scrollToBottom = () => {
+    const scrollToBottom = useCallback(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    };
+    }, []);
 
     useEffect(() => {
         if (isOpen) {
             scrollToBottom();
-            setShowBubble(false);
         }
-    }, [messages, isOpen]);
+    }, [messages, isOpen, scrollToBottom]);
 
     // Show bubble after a delay
     useEffect(() => {
@@ -46,12 +47,13 @@ export default function Chatbot() {
         return () => clearTimeout(timer);
     }, [isOpen]);
 
-    const handleSend = () => {
+    const handleSend = async () => {
         if (!inputValue.trim()) return;
 
+        const text = inputValue.trim();
         const userMsg: Message = {
             id: Date.now().toString(),
-            text: inputValue,
+            text: text,
             sender: 'user',
             timestamp: new Date()
         };
@@ -60,6 +62,17 @@ export default function Chatbot() {
         setInputValue("");
         setIsTyping(true);
         Clarity.setTag("action", "chatbot_message_sent");
+
+        // Save to Firestore
+        try {
+            await addDoc(collection(db, "chats"), {
+                text: text,
+                sender: 'user',
+                timestamp: serverTimestamp(),
+            });
+        } catch (error) {
+            console.error("Error saving chat:", error);
+        }
 
         setTimeout(() => {
             const botMsg: Message = {
@@ -122,6 +135,7 @@ export default function Chatbot() {
                         setIsOpen(newOpenState);
                         if (newOpenState) {
                             Clarity.setTag("action", "chatbot_opened");
+                            setShowBubble(false);
                         }
                     }}
                     className="w-14 h-14 bg-amber-500 text-bg-primary rounded-full shadow-[0_8px_30px_rgb(245,158,11,0.3)] flex items-center justify-center cursor-pointer border-2 border-bg-primary relative overflow-hidden group"

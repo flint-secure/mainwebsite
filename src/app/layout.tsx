@@ -3,7 +3,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 import Chatbot from "@/components/Chatbot";
-import Clarity from "@/components/Clarity";
+import Analytics from "@/components/Analytics";
 
 const siteUrl = getSiteUrl();
 
@@ -170,7 +170,7 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}
       >
-        <Clarity projectId="vuh584t40j" />
+        <Analytics />
         {children}
         <Chatbot />
       </body>

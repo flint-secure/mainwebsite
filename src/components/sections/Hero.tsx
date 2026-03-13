@@ -85,7 +85,6 @@ export default function Hero() {
     const [visibleRequestLines, setVisibleRequestLines] = useState(0);
     const [showDivider, setShowDivider] = useState(false);
     const [visibleResponseLines, setVisibleResponseLines] = useState(0);
-    const [animationStarted, setAnimationStarted] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
     const animRef = useRef(false);
 
@@ -97,7 +96,6 @@ export default function Hero() {
         const lineDelay = 60;
 
         setTimeout(() => {
-            setAnimationStarted(true);
             let currentLine = 0;
             const requestTimer = setInterval(() => {
                 currentLine++;

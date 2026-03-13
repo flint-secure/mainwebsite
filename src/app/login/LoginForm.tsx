@@ -6,15 +6,69 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import MouseEffect from "@/components/MouseEffect";
+import { auth } from "@/lib/firebase";
+import { 
+    signInWithEmailAndPassword, 
+    signInWithPopup, 
+    GoogleAuthProvider, 
+    GithubAuthProvider,
+    AuthError
+} from "firebase/auth";
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
     const [isLoading, setIsLoading] = useState(false);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const router = useRouter();
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
-        // Mock login
-        setTimeout(() => setIsLoading(false), 2000);
+        setError("");
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+            router.push("/"); // Redirect after success
+        } catch (err) {
+            const authError = err as AuthError;
+            console.error(authError);
+            setError(authError.message || "Failed to sign in. Please check your credentials.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleGoogleSignIn = async () => {
+        setIsLoading(true);
+        setError("");
+        try {
+            const provider = new GoogleAuthProvider();
+            await signInWithPopup(auth, provider);
+            router.push("/");
+        } catch (err) {
+            const authError = err as AuthError;
+            console.error(authError);
+            setError(authError.message || "Failed to sign in with Google.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleGithubSignIn = async () => {
+        setIsLoading(true);
+        setError("");
+        try {
+            const provider = new GithubAuthProvider();
+            await signInWithPopup(auth, provider);
+            router.push("/");
+        } catch (err) {
+            const authError = err as AuthError;
+            console.error(authError);
+            setError(authError.message || "Failed to sign in with GitHub.");
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -61,6 +115,11 @@ export default function LoginForm() {
                 {/* Login Card */}
                 <div className="bg-bg-secondary border border-border-subtle p-8 rounded-2xl shadow-2xl">
                     <form onSubmit={handleSubmit} className="space-y-6">
+                        {error && (
+                            <div className="bg-red-500/10 border border-red-500/50 text-red-500 text-xs p-3 rounded-lg">
+                                {error}
+                            </div>
+                        )}
                         <div>
                             <label className="block text-sm font-medium text-text-primary mb-2">Email Address</label>
                             <div className="relative">
@@ -68,6 +127,8 @@ export default function LoginForm() {
                                 <input
                                     type="email"
                                     required
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                     className="w-full bg-bg-tertiary border border-border-subtle rounded-lg py-3 pl-10 pr-4 text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-amber-500/50 transition-colors"
                                     placeholder="name@company.com"
                                 />
@@ -84,6 +145,8 @@ export default function LoginForm() {
                                 <input
                                     type="password"
                                     required
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
                                     className="w-full bg-bg-tertiary border border-border-subtle rounded-lg py-3 pl-10 pr-4 text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-amber-500/50 transition-colors"
                                     placeholder="••••••••"
                                 />
@@ -107,11 +170,19 @@ export default function LoginForm() {
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
-                        <button className="flex items-center justify-center gap-2 bg-bg-tertiary border border-border-subtle hover:border-border-hover rounded-lg py-2.5 transition-all text-text-primary font-medium text-sm group">
+                        <button 
+                            onClick={handleGithubSignIn}
+                            disabled={isLoading}
+                            className="flex items-center justify-center gap-2 bg-bg-tertiary border border-border-subtle hover:border-border-hover rounded-lg py-2.5 transition-all text-text-primary font-medium text-sm group disabled:opacity-50"
+                        >
                             <Github size={18} className="text-text-secondary group-hover:text-text-primary" />
                             GitHub
                         </button>
-                        <button className="flex items-center justify-center gap-2 bg-bg-tertiary border border-border-subtle hover:border-border-hover rounded-lg py-2.5 transition-all text-text-primary font-medium text-sm group">
+                        <button 
+                            onClick={handleGoogleSignIn}
+                            disabled={isLoading}
+                            className="flex items-center justify-center gap-2 bg-bg-tertiary border border-border-subtle hover:border-border-hover rounded-lg py-2.5 transition-all text-text-primary font-medium text-sm group disabled:opacity-50"
+                        >
                             <Chrome size={18} className="text-text-secondary group-hover:text-text-primary" />
                             Google
                         </button>

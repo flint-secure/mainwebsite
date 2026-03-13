@@ -5,6 +5,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import Clarity from "@microsoft/clarity";
 
+import { db } from "@/lib/firebase";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+
 interface WaitlistModalProps {
     open: boolean;
     onClose: () => void;
@@ -19,16 +22,16 @@ export default function WaitlistModal({ open, onClose }: WaitlistModalProps) {
         e.preventDefault();
         setLoading(true);
         try {
-            await fetch("/api/waitlist", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(form),
+            await addDoc(collection(db, "waitlist"), {
+                ...form,
+                timestamp: serverTimestamp(),
             });
             Clarity.setTag("action", "waitlist_signup");
             Clarity.setTag("company", form.company);
             setSubmitted(true);
-        } catch {
-            setSubmitted(true);
+        } catch (error) {
+            console.error("Error adding to waitlist:", error);
+            setSubmitted(true); // Still show success UI to user or handle error
         } finally {
             setLoading(false);
         }
