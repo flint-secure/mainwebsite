@@ -158,7 +158,7 @@ export default function Chatbot() {
             // AI Logic using the Template
             const model = getGenerativeModel(ai, { 
                 templateId: "input-system-instructions"
-            });
+            } as any);
 
             const result = await model.generateContent({
                 values: {
@@ -166,7 +166,7 @@ export default function Chatbot() {
                     userEmail: userInfo.email,
                     userMessage: text
                 }
-            });
+            } as any);
 
             const responseText = result.response.text();
 
