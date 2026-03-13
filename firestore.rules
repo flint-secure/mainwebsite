@@ -1,0 +1,20 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /waitlist/{docId} {
+      allow create: if true;
+      allow read, update, delete: if false;
+    }
+    match /leads/{docId} {
+      allow create: if true;
+      allow read, update, delete: if false;
+    }
+    match /chat_sessions/{sessionId} {
+      allow read, write: if true;
+    }
+    match /chats/{docId} {
+      allow create: if true;
+      allow read, update, delete: if false;
+    }
+  }
+}

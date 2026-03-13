@@ -2,6 +2,7 @@ import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAnalytics, isSupported } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getAI, GoogleAIBackend } from "firebase/ai";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDyc2D5WTW7cZvY7f7qVRBARVtlk1d3JAw",
@@ -18,6 +19,9 @@ const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+// Initialize the Gemini Developer API backend service
+const ai = getAI(app, { backend: new GoogleAIBackend() });
+
 export const initAnalytics = async () => {
   if (typeof window !== "undefined") {
     const supported = await isSupported();
@@ -28,4 +32,4 @@ export const initAnalytics = async () => {
   return null;
 };
 
-export { app, auth, db };
+export { app, auth, db, ai };

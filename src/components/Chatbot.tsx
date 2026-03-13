@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { MessageCircle, X, Send, Bot, Mail } from "lucide-react";
+import { MessageCircle, X, Send, Bot, Mail, User, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Clarity from "@microsoft/clarity";
-import { db } from "@/lib/firebase";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { db, ai } from "@/lib/firebase";
+import { collection, addDoc, serverTimestamp, doc, getDoc, setDoc, increment } from "firebase/firestore";
+import { getGenerativeModel } from "firebase/ai";
 
 interface Message {
     id: string;
@@ -14,23 +15,66 @@ interface Message {
     timestamp: Date;
 }
 
+const MAX_MESSAGES = 5;
+
 export default function Chatbot() {
     const [isOpen, setIsOpen] = useState(false);
     const [showBubble, setShowBubble] = useState(false);
+    const [step, setStep] = useState<'info' | 'chat'>('info');
+    const [userInfo, setUserInfo] = useState({ name: "", email: "" });
     const [messages, setMessages] = useState<Message[]>([
         {
             id: '1',
-            text: "Hi! I'm Flint's AI assistant. How can I help you today?",
+            text: "Hi! I'm Flint's AI assistant. To better assist you, could you please provide your name and email?",
             sender: 'bot',
             timestamp: new Date()
         }
     ]);
     const [inputValue, setInputValue] = useState("");
     const [isTyping, setIsTyping] = useState(false);
+    const [messageCount, setMessageCount] = useState(0);
+    const [sessionId, setSessionId] = useState("");
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = useCallback(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, []);
+
+    // Initialize Session and Load Count
+    useEffect(() => {
+        let sid = localStorage.getItem("flint_chat_session");
+        if (!sid) {
+            sid = Math.random().toString(36).substring(7);
+            localStorage.setItem("flint_chat_session", sid);
+        }
+        setSessionId(sid);
+
+        const loadSession = async () => {
+            try {
+                const sessionDoc = await getDoc(doc(db, "chat_sessions", sid));
+                if (sessionDoc.exists()) {
+                    const data = sessionDoc.data();
+                    setMessageCount(data.count || 0);
+                    
+                    if (data.name && data.email) {
+                        setUserInfo({ name: data.name, email: data.email });
+                        setStep('chat');
+                        // Replace initial message with a personalized welcome for restored session
+                        setMessages([
+                            {
+                                id: 'welcome-restored',
+                                text: `Welcome back, ${data.name}! How can I help you today?`,
+                                sender: 'bot',
+                                timestamp: new Date()
+                            }
+                        ]);
+                    }
+                }
+            } catch (e) {
+                console.error("Error loading session:", e);
+            }
+        };
+        loadSession();
     }, []);
 
     useEffect(() => {
@@ -39,7 +83,6 @@ export default function Chatbot() {
         }
     }, [messages, isOpen, scrollToBottom]);
 
-    // Show bubble after a delay
     useEffect(() => {
         const timer = setTimeout(() => {
             if (!isOpen) setShowBubble(true);
@@ -47,8 +90,38 @@ export default function Chatbot() {
         return () => clearTimeout(timer);
     }, [isOpen]);
 
+    const handleInfoSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!userInfo.name || !userInfo.email) return;
+
+        setStep('chat');
+        const welcomeMsg: Message = {
+            id: 'welcome',
+            text: `Thanks, ${userInfo.name}! How can I help you with Flint today?`,
+            sender: 'bot',
+            timestamp: new Date()
+        };
+        setMessages([welcomeMsg]); // Clear the info-request message and show welcome
+
+        try {
+            await addDoc(collection(db, "leads"), {
+                ...userInfo,
+                sessionId,
+                timestamp: serverTimestamp(),
+                source: 'chatbot_info'
+            });
+            // Save info to session doc too
+            await setDoc(doc(db, "chat_sessions", sessionId), {
+                ...userInfo,
+                lastActive: serverTimestamp()
+            }, { merge: true });
+        } catch (e) {
+            console.error("Error logging lead:", e);
+        }
+    };
+
     const handleSend = async () => {
-        if (!inputValue.trim()) return;
+        if (!inputValue.trim() || messageCount >= MAX_MESSAGES) return;
 
         const text = inputValue.trim();
         const userMsg: Message = {
@@ -63,32 +136,75 @@ export default function Chatbot() {
         setIsTyping(true);
         Clarity.setTag("action", "chatbot_message_sent");
 
-        // Save to Firestore
         try {
+            // Update session count
+            const sessionRef = doc(db, "chat_sessions", sessionId);
+            await setDoc(sessionRef, { 
+                count: increment(1),
+                lastActive: serverTimestamp() 
+            }, { merge: true });
+            
+            setMessageCount(prev => prev + 1);
+
+            // Save user message to history
             await addDoc(collection(db, "chats"), {
+                sessionId,
+                ...userInfo,
                 text: text,
                 sender: 'user',
                 timestamp: serverTimestamp(),
             });
-        } catch (error) {
-            console.error("Error saving chat:", error);
-        }
 
-        setTimeout(() => {
+            // AI Logic using the Template
+            const model = getGenerativeModel(ai, { 
+                templateId: "input-system-instructions"
+            });
+
+            const result = await model.generateContent({
+                values: {
+                    userName: userInfo.name,
+                    userEmail: userInfo.email,
+                    userMessage: text
+                }
+            });
+
+            const responseText = result.response.text();
+
             const botMsg: Message = {
                 id: (Date.now() + 1).toString(),
-                text: "Thanks for your message! Our team typically responds in under an hour. For urgent support, email us at hello.flintsecure@gmail.com",
+                text: responseText,
                 sender: 'bot',
                 timestamp: new Date()
             };
+
             setMessages(prev => [...prev, botMsg]);
+
+            // Save bot response to history
+            await addDoc(collection(db, "chats"), {
+                sessionId,
+                ...userInfo,
+                text: responseText,
+                sender: 'bot',
+                timestamp: serverTimestamp(),
+            });
+
+        } catch (error) {
+            console.error("Chat error:", error);
+            const errorMsg: Message = {
+                id: 'error-' + Date.now(),
+                text: "Sorry, I'm having trouble connecting. One of our representatives will get back to you at your email shortly.",
+                sender: 'bot',
+                timestamp: new Date()
+            };
+            setMessages(prev => [...prev, errorMsg]);
+        } finally {
             setIsTyping(false);
-        }, 1500);
+        }
     };
 
     return (
         <>
-            {/* Toggle Button & Notification Bubble */}
+            {/* Toggle Button */}
             <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
                 <AnimatePresence>
                     {showBubble && !isOpen && (
@@ -99,15 +215,12 @@ export default function Chatbot() {
                             className="bg-bg-secondary/80 backdrop-blur-md border border-amber-500/20 text-text-primary px-4 py-3 rounded-2xl text-[13px] font-medium shadow-2xl whitespace-nowrap relative mr-2 max-w-[200px]"
                         >
                             <button 
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setShowBubble(false);
-                                }}
+                                onClick={(e) => { e.stopPropagation(); setShowBubble(false); }}
                                 className="absolute -top-2 -right-2 w-5 h-5 bg-bg-tertiary border border-border-subtle rounded-full flex items-center justify-center text-text-tertiary hover:text-text-primary transition-colors"
                             >
                                 <X size={10} />
                             </button>
-                            <p className="leading-tight">Need help with our API? <span className="text-amber-500 font-bold block mt-0.5">Chat with us →</span></p>
+                            <p className="leading-tight">Need help? <span className="text-amber-500 font-bold block mt-0.5">Chat with us →</span></p>
                             <div className="absolute -bottom-1 right-4 w-2 h-2 bg-bg-secondary/80 border-r border-b border-amber-500/20 rotate-45" />
                         </motion.div>
                     )}
@@ -115,63 +228,22 @@ export default function Chatbot() {
 
                 <motion.button
                     initial={{ scale: 0 }}
-                    animate={{ 
-                        scale: 1,
-                        y: [0, -8, 0] 
-                    }}
-                    transition={{
-                        y: {
-                            duration: 2,
-                            repeat: Infinity,
-                            repeatDelay: 3,
-                            ease: "easeInOut"
-                        },
-                        scale: { duration: 0.3 }
-                    }}
+                    animate={{ scale: 1, y: [0, -8, 0] }}
+                    transition={{ y: { duration: 2, repeat: Infinity, repeatDelay: 3, ease: "easeInOut" }, scale: { duration: 0.3 } }}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => {
-                        const newOpenState = !isOpen;
-                        setIsOpen(newOpenState);
-                        if (newOpenState) {
+                        setIsOpen(!isOpen);
+                        if (!isOpen) {
                             Clarity.setTag("action", "chatbot_opened");
                             setShowBubble(false);
                         }
                     }}
-                    className="w-14 h-14 bg-amber-500 text-bg-primary rounded-full shadow-[0_8px_30px_rgb(245,158,11,0.3)] flex items-center justify-center cursor-pointer border-2 border-bg-primary relative overflow-hidden group"
+                    className="w-14 h-14 bg-amber-500 text-bg-primary rounded-full shadow-2xl flex items-center justify-center cursor-pointer border-2 border-bg-primary relative overflow-hidden"
                 >
-                    {/* Animated background pulse */}
-                    <motion.div 
-                        animate={{ scale: [1, 1.5, 1], opacity: [0.1, 0, 0.1] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                        className="absolute inset-0 bg-white"
-                    />
-                    
+                    <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.1, 0, 0.1] }} transition={{ duration: 2, repeat: Infinity }} className="absolute inset-0 bg-white" />
                     <AnimatePresence mode="wait">
-                        {isOpen ? (
-                            <motion.div
-                                key="close"
-                                initial={{ rotate: -90, opacity: 0 }}
-                                animate={{ rotate: 0, opacity: 1 }}
-                                exit={{ rotate: 90, opacity: 0 }}
-                            >
-                                <X size={24} />
-                            </motion.div>
-                        ) : (
-                            <motion.div
-                                key="chat"
-                                initial={{ rotate: 90, opacity: 0 }}
-                                animate={{ rotate: 0, opacity: 1 }}
-                                exit={{ rotate: -90, opacity: 0 }}
-                                className="relative"
-                            >
-                                <MessageCircle size={24} />
-                                {/* Unread indicator */}
-                                {showBubble && (
-                                    <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red border-2 border-amber-500 rounded-full" />
-                                )}
-                            </motion.div>
-                        )}
+                        {isOpen ? <X key="close" size={24} /> : <MessageCircle key="chat" size={24} />}
                     </AnimatePresence>
                 </motion.button>
             </div>
@@ -183,97 +255,86 @@ export default function Chatbot() {
                         initial={{ opacity: 0, y: 20, scale: 0.95, transformOrigin: 'bottom right' }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 20, scale: 0.95 }}
-                        className="fixed bottom-24 right-6 z-50 w-[360px] max-w-[calc(100vw-3rem)] h-[500px] max-h-[calc(100vh-8rem)] bg-bg-secondary border border-border-subtle rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+                        className="fixed bottom-24 right-6 z-50 w-[360px] max-w-[calc(100vw-3rem)] h-[500px] bg-bg-secondary border border-border-subtle rounded-2xl shadow-2xl flex flex-col overflow-hidden"
                     >
-                        {/* Header */}
                         <div className="p-4 border-b border-border-subtle bg-bg-tertiary flex items-center justify-between">
                             <div className="flex items-center gap-3">
                                 <div className="w-8 h-8 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500">
                                     <Bot size={18} />
                                 </div>
                                 <div>
-                                    <h3 className="text-sm font-semibold text-text-primary">Flint Support</h3>
-                                    <div className="flex items-center gap-1.5">
-                                        <span className="text-[11px] font-bold text-green uppercase tracking-tighter">Live</span>
-                                        <span className="text-text-tertiary text-[10px]">·</span>
-                                        <span className="text-[11px] text-text-tertiary">AI Assistant Online</span>
-                                    </div>
+                                    <h3 className="text-sm font-semibold text-text-primary">Flint AI</h3>
+                                    <p className="text-[10px] text-text-tertiary">
+                                        {messageCount}/{MAX_MESSAGES} messages used
+                                    </p>
                                 </div>
                             </div>
-                            <button 
-                                onClick={() => setIsOpen(false)}
-                                className="text-text-tertiary hover:text-text-primary p-1"
-                            >
-                                <X size={18} />
-                            </button>
+                            <button onClick={() => setIsOpen(false)} className="text-text-tertiary hover:text-text-primary"><X size={18} /></button>
                         </div>
 
-                        {/* Messages */}
                         <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin">
                             {messages.map((msg) => (
-                                <div
-                                    key={msg.id}
-                                    className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                                >
-                                    <div
-                                        className={`max-w-[85%] p-3 rounded-2xl text-[13px] leading-relaxed ${
-                                            msg.sender === 'user'
-                                                ? 'bg-amber-500 text-bg-primary rounded-tr-none font-medium'
-                                                : 'bg-bg-tertiary text-text-secondary border border-border-subtle rounded-tl-none'
-                                        }`}
-                                    >
+                                <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                    <div className={`max-w-[85%] p-3 rounded-2xl text-[13px] leading-relaxed ${msg.sender === 'user' ? 'bg-amber-500 text-bg-primary rounded-tr-none font-medium' : 'bg-bg-tertiary text-text-secondary border border-border-subtle rounded-tl-none'}`}>
                                         {msg.text}
                                     </div>
                                 </div>
                             ))}
+                            {messageCount >= MAX_MESSAGES && (
+                                <div className="flex justify-center py-2">
+                                    <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 flex items-start gap-3 max-w-[90%]">
+                                        <AlertCircle size={16} className="text-amber-500 shrink-0 mt-0.5" />
+                                        <p className="text-[12px] text-text-secondary leading-tight">
+                                            You&apos;ve reached the message limit for this session. Our representative will contact you at <strong>{userInfo.email}</strong> to continue.
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
                             {isTyping && (
                                 <div className="flex justify-start">
-                                    <div className="bg-bg-tertiary border border-border-subtle p-3 rounded-2xl rounded-tl-none">
-                                        <div className="flex gap-1">
-                                            <span className="w-1 h-1 rounded-full bg-text-tertiary animate-bounce [animation-delay:-0.3s]" />
-                                            <span className="w-1 h-1 rounded-full bg-text-tertiary animate-bounce [animation-delay:-0.15s]" />
-                                            <span className="w-1 h-1 rounded-full bg-text-tertiary animate-bounce" />
-                                        </div>
+                                    <div className="bg-bg-tertiary border border-border-subtle p-3 rounded-2xl rounded-tl-none flex gap-1">
+                                        <span className="w-1 h-1 rounded-full bg-text-tertiary animate-bounce" />
+                                        <span className="w-1 h-1 rounded-full bg-text-tertiary animate-bounce [animation-delay:0.2s]" />
+                                        <span className="w-1 h-1 rounded-full bg-text-tertiary animate-bounce [animation-delay:0.4s]" />
                                     </div>
                                 </div>
                             )}
                             <div ref={messagesEndRef} />
                         </div>
 
-                        {/* Footer / Input */}
-                        <div className="p-4 border-t border-border-subtle bg-bg-secondary">
-                            <form
-                                onSubmit={(e) => {
-                                    e.preventDefault();
-                                    handleSend();
-                                }}
-                                className="relative"
-                            >
-                                <input
-                                    type="text"
-                                    value={inputValue}
-                                    onChange={(e) => setInputValue(e.target.value)}
-                                    placeholder="Ask about API or integration..."
-                                    className="w-full bg-bg-tertiary border border-border-subtle rounded-xl py-2.5 pl-4 pr-10 text-[13px] text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-amber-500/50 transition-colors"
-                                />
-                                <button
-                                    type="submit"
-                                    disabled={!inputValue.trim()}
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-amber-500 disabled:text-text-tertiary transition-colors"
-                                >
-                                    <Send size={18} />
-                                </button>
+                        {step === 'info' ? (
+                            <form onSubmit={handleInfoSubmit} className="p-4 bg-bg-secondary border-t border-border-subtle space-y-3">
+                                <div className="relative">
+                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary" size={14} />
+                                    <input required value={userInfo.name} onChange={e => setUserInfo({ ...userInfo, name: e.target.value })} placeholder="Full Name" className="w-full bg-bg-tertiary border border-border-subtle rounded-lg py-2 pl-9 pr-4 text-[13px] focus:outline-none focus:border-amber-500" />
+                                </div>
+                                <div className="relative">
+                                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary" size={14} />
+                                    <input required type="email" value={userInfo.email} onChange={e => setUserInfo({ ...userInfo, email: e.target.value })} placeholder="Email Address" className="w-full bg-bg-tertiary border border-border-subtle rounded-lg py-2 pl-9 pr-4 text-[13px] focus:outline-none focus:border-amber-500" />
+                                </div>
+                                <button type="submit" className="w-full bg-amber-500 text-bg-primary font-bold py-2 rounded-lg text-[13px] hover:bg-amber-400 transition-colors">Start Chat</button>
                             </form>
-                            <div className="mt-3 flex items-center justify-center gap-4">
-                                <a
-                                    href="mailto:hello.flintsecure@gmail.com"
-                                    className="text-[11px] text-text-tertiary hover:text-text-secondary flex items-center gap-1.5 transition-colors"
-                                >
-                                    <Mail size={12} />
-                                    Email Support
-                                </a>
+                        ) : (
+                            <div className="p-4 border-t border-border-subtle bg-bg-secondary">
+                                <form onSubmit={e => { e.preventDefault(); handleSend(); }} className="relative">
+                                    <input 
+                                        type="text" 
+                                        value={inputValue} 
+                                        onChange={e => setInputValue(e.target.value)} 
+                                        disabled={messageCount >= MAX_MESSAGES}
+                                        placeholder={messageCount >= MAX_MESSAGES ? "Limit reached" : "Type your message..."}
+                                        className="w-full bg-bg-tertiary border border-border-subtle rounded-xl py-2.5 pl-4 pr-10 text-[13px] text-text-primary focus:outline-none focus:border-amber-500/50 disabled:opacity-50" 
+                                    />
+                                    <button 
+                                        type="submit" 
+                                        disabled={!inputValue.trim() || isTyping || messageCount >= MAX_MESSAGES} 
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-amber-500 disabled:text-text-tertiary transition-colors"
+                                    >
+                                        <Send size={18} />
+                                    </button>
+                                </form>
                             </div>
-                        </div>
+                        )}
                     </motion.div>
                 )}
             </AnimatePresence>
