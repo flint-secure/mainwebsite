@@ -26,22 +26,37 @@ const ai = getAI(app, { backend: new GoogleAIBackend() });
 export const initFirebaseServices = async () => {
   if (typeof window !== "undefined") {
     // App Check Initialization
-    // For local development, you might want to enable the debug token:
-    // if (process.env.NODE_ENV === 'development') {
-    //   (window as any).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
-    // }
-    
     const recaptchaKey = "6Lduw4gsAAAAALefrkMe0RvEvZM6x1GqbyhWM4U9";
     
-    initializeAppCheck(app, {
-      provider: new ReCaptchaV3Provider(recaptchaKey),
-      isTokenAutoRefreshEnabled: true
-    });
+    try {
+      // Enable App Check debug token for localhost or specific environments if needed
+      if (
+        window.location.hostname === "localhost" || 
+        window.location.hostname === "127.0.0.1" ||
+        process.env.NODE_ENV === "development"
+      ) {
+        // This will log a debug token to the console which can be added 
+        // to the Firebase Console -> App Check -> Manage debug tokens
+        (window as any).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+      }
+
+      initializeAppCheck(app, {
+        provider: new ReCaptchaV3Provider(recaptchaKey),
+        isTokenAutoRefreshEnabled: true
+      });
+      console.log("Firebase App Check initialized.");
+    } catch (err) {
+      console.error("Firebase App Check initialization failed:", err);
+    }
 
     // Analytics Initialization
-    const supported = await isSupported();
-    if (supported) {
-      getAnalytics(app);
+    try {
+      const supported = await isSupported();
+      if (supported) {
+        getAnalytics(app);
+      }
+    } catch (err) {
+      console.error("Firebase Analytics initialization failed:", err);
     }
   }
 };

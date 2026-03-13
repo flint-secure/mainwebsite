@@ -1,17 +1,25 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Waitlist collection: allow anyone to join (create)
     match /waitlist/{docId} {
       allow create: if true;
       allow read, update, delete: if false;
     }
+    
+    // Leads collection: allow anyone to submit (create)
     match /leads/{docId} {
       allow create: if true;
       allow read, update, delete: if false;
     }
+    
+    // Chat sessions: allow anyone to read/write their own session
+    // In a prototype, we allow full access by ID.
     match /chat_sessions/{sessionId} {
       allow read, write: if true;
     }
+    
+    // Chat messages: allow anyone to add to the chat history
     match /chats/{docId} {
       allow create: if true;
       allow read, update, delete: if false;
