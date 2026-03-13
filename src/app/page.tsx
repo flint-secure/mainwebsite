@@ -31,7 +31,7 @@ export default function Home() {
         <Capabilities />
         <Integration />
         <Performance />
-        <Founders />
+      //  <Founders />
         <Pricing />
       </main>
       <Footer />
