@@ -175,18 +175,16 @@ export default function Hero() {
                             </div>
                         </Reveal>
 
-                        <Reveal delay={1.0}>
+                        {/* <Reveal delay={1.0}>
                             <div className="mt-10 flex items-center gap-6">
                                 <div className="flex -space-x-3">
                                     {[1, 2, 3, 4].map((i) => (
                                         <div key={i} className="w-8 h-8 rounded-full border-2 border-bg-primary bg-bg-tertiary" />
                                     ))}
                                 </div>
-                                <p className="text-[13px] text-text-tertiary">
-                                    Trusted by <span className="text-text-secondary font-semibold">50+ fintech teams</span>
-                                </p>
+                               
                             </div>
-                        </Reveal>
+                        </Reveal> */}
                     </div>
 
                     {/* Right Column - Terminal */}
