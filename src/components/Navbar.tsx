@@ -6,6 +6,7 @@ import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import WaitlistModal from "./WaitlistModal";
+import { trackEvent } from "@/lib/analytics-utils";
 
 const navLinks = [
     { label: "How It Works", href: "#how-it-works" },
@@ -74,6 +75,7 @@ export default function Navbar() {
                             <a
                                 key={link.href}
                                 href={link.href}
+                                onClick={() => trackEvent("nav_link_click", { label: link.label })}
                                 className={`relative text-[14px] font-semibold tracking-tight transition-all duration-300 ${activeSection === link.href
                                         ? "text-amber-500"
                                         : "text-text-secondary hover:text-text-primary"
@@ -96,12 +98,14 @@ export default function Navbar() {
                     <div className="hidden lg:flex items-center gap-6">
                         <a
                             href="#"
+                            onClick={() => trackEvent("nav_docs_click")}
                             className="text-[14px] font-semibold text-text-secondary hover:text-text-primary transition-colors"
                         >
                             Docs
                         </a>
                         <Link
                             href="/login"
+                            onClick={() => trackEvent("nav_login_click")}
                             className="text-[14px] font-bold bg-amber-500 text-bg-primary px-6 py-2.5 rounded-xl hover:bg-amber-400 transition-all duration-200 hover:scale-[1.05] shadow-lg shadow-amber-500/20 cursor-pointer"
                         >
                             Login
@@ -111,7 +115,10 @@ export default function Navbar() {
                     {/* Mobile hamburger */}
                     <button
                         className="lg:hidden text-text-primary cursor-pointer p-2"
-                        onClick={() => setMobileOpen(!mobileOpen)}
+                        onClick={() => {
+                            setMobileOpen(!mobileOpen);
+                            if (!mobileOpen) trackEvent("nav_mobile_menu_open");
+                        }}
                     >
                         {mobileOpen ? <X size={28} /> : <Menu size={28} />}
                     </button>
@@ -143,7 +150,10 @@ export default function Navbar() {
                                     initial={{ opacity: 0, x: 20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: i * 0.1 }}
-                                    onClick={() => setMobileOpen(false)}
+                                    onClick={() => {
+                                        setMobileOpen(false);
+                                        trackEvent("nav_link_mobile_click", { label: link.label });
+                                    }}
                                     className="text-3xl font-bold text-text-secondary hover:text-amber-500 transition-colors"
                                 >
                                     {link.label}
@@ -154,7 +164,10 @@ export default function Navbar() {
                         <div className="mt-auto flex flex-col gap-4">
                              <Link
                                 href="/login"
-                                onClick={() => setMobileOpen(false)}
+                                onClick={() => {
+                                    setMobileOpen(false);
+                                    trackEvent("nav_login_mobile_click");
+                                }}
                                 className="w-full text-center text-[18px] font-bold bg-amber-500 text-bg-primary py-5 rounded-2xl"
                             >
                                 Login
@@ -163,6 +176,7 @@ export default function Navbar() {
                                 onClick={() => {
                                     setMobileOpen(false);
                                     setModalOpen(true);
+                                    trackEvent("nav_trial_mobile_click");
                                 }}
                                 className="w-full text-center text-[18px] font-bold border border-border-subtle text-text-primary py-5 rounded-2xl"
                             >

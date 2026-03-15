@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAnalytics, isSupported } from "firebase/analytics";
+import { getAnalytics, isSupported, type Analytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getAI, GoogleAIBackend } from "firebase/ai";
@@ -19,6 +19,9 @@ const firebaseConfig = {
 const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+// Global analytics instance
+let analytics: Analytics | undefined;
 
 // Initialize App Check IMMEDIATELY on the client side
 if (typeof window !== "undefined") {
@@ -54,7 +57,7 @@ export const initFirebaseServices = async () => {
     try {
       const supported = await isSupported();
       if (supported) {
-        getAnalytics(app);
+        analytics = getAnalytics(app);
       }
     } catch (err) {
       console.error("Firebase Analytics initialization failed:", err);
@@ -62,4 +65,4 @@ export const initFirebaseServices = async () => {
   }
 };
 
-export { app, auth, db, ai };
+export { app, auth, db, ai, analytics };

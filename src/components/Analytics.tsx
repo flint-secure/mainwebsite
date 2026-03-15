@@ -1,33 +1,19 @@
 "use client";
 
 import { useEffect } from "react";
-import Script from "next/script";
+import { clarity } from "@microsoft/clarity";
 import { initFirebaseServices } from "@/lib/firebase";
 
 export default function Analytics() {
   useEffect(() => {
+    const clarityId = "vuh584t40j";
+    
+    // Initialize Microsoft Clarity
+    clarity.init(clarityId);
+    
+    // Initialize Firebase Analytics and other services
     initFirebaseServices();
   }, []);
 
-  const clarityId = "vuh584t40j";
-
-  return (
-    <>
-      {clarityId && (
-        <Script
-          id="clarity-script"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-                (function(c,l,a,r,i,t,y){
-                    c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-                    t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-                    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-                })(window, document, "clarity", "script", "${clarityId}");
-            `,
-          }}
-        />
-      )}
-    </>
-  );
+  return null;
 }

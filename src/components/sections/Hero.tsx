@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import WaitlistModal from "../WaitlistModal";
 import { Reveal } from "../Reveal";
+import { trackEvent } from "@/lib/analytics-utils";
 
 const headlineLines = [
     { text: "Every transaction.", highlight: false },
@@ -161,13 +162,17 @@ export default function Hero() {
                         <Reveal delay={0.8}>
                             <div className="mt-12 flex flex-col sm:flex-row gap-5">
                                 <button
-                                    onClick={() => setModalOpen(true)}
+                                    onClick={() => {
+                                        setModalOpen(true);
+                                        trackEvent("hero_trial_click");
+                                    }}
                                     className="text-[16px] font-bold bg-amber-500 text-bg-primary px-8 py-4 rounded-xl hover:bg-amber-400 transition-all duration-200 hover:scale-[1.02] shadow-[0_8px_25px_rgba(245,158,11,0.25)] cursor-pointer"
                                 >
                                     Start Free Trial
                                 </button>
                                 <a
                                     href="#integration"
+                                    onClick={() => trackEvent("hero_demo_click")}
                                     className="text-[16px] font-bold text-text-primary px-8 py-4 rounded-xl border border-border-subtle hover:border-amber-500/30 hover:bg-amber-500/5 transition-all duration-200 text-center"
                                 >
                                     View Demo →

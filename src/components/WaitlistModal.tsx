@@ -3,10 +3,9 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
-import Clarity from "@microsoft/clarity";
-
 import { db } from "@/lib/firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { trackEvent } from "@/lib/analytics-utils";
 
 interface WaitlistModalProps {
     open: boolean;
@@ -26,8 +25,13 @@ export default function WaitlistModal({ open, onClose }: WaitlistModalProps) {
                 ...form,
                 timestamp: serverTimestamp(),
             });
-            Clarity.setTag("action", "waitlist_signup");
-            Clarity.setTag("company", form.company);
+            
+            // Unified analytics tracking
+            trackEvent("waitlist_signup", {
+                company: form.company,
+                action: "form_submission"
+            });
+
             setSubmitted(true);
         } catch (error) {
             console.error("Error adding to waitlist:", error);
