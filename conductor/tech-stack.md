@@ -6,6 +6,7 @@
 - **Styling:** TailwindCSS
 - **Animations:** Framer Motion
 - **Icons:** Lucide React
+- **Analytics:** Firebase Analytics, Microsoft Clarity
 
 ## Backend
 - **Platform:** Firebase
