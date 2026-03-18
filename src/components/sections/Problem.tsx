@@ -1,5 +1,5 @@
 const stats = [
-    { metric: "Rs 50L+", label: "Lost to fraud annually by a single mid-size PSP" },
+    { metric: "Rs 100Cr+", label: "Lost to fraud annually by a single mid-size PSP" },
     { metric: "73%", label: "of fraud bypasses OTP-only protection" },
     { metric: "5-10x", label: "higher false positive rates with rule-based systems" },
 ];
