@@ -97,7 +97,7 @@ export default function Navbar() {
                     {/* Right Buttons - Desktop */}
                     <div className="hidden lg:flex items-center gap-6">
                         <a
-                            href="#"
+                            href="https://docs.flintsecure.app"
                             onClick={() => trackEvent("nav_docs_click")}
                             className="text-[14px] font-semibold text-text-secondary hover:text-text-primary transition-colors"
                         >
